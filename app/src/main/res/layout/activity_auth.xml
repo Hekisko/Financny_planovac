@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AuthActivity">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Prihláste sa do aplikácie pomocou Vášho Googlu účtu"
+        android:textAlignment="center"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/auth_login_button"
+        app:layout_constraintStart_toStartOf="@+id/auth_login_button"
+        app:layout_constraintEnd_toEndOf="@+id/auth_login_button"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold"
+        android:textColor="@color/blue_800"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"/>
+
+    <ImageButton
+        android:id="@+id/auth_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/ic_google"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

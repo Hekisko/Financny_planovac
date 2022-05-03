@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainMenu"
+    android:id="@+id/main_menu_screen">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/main_menu_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:layout_marginBottom="58dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/main_menu_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabCradleMargin="15dp"
+        app:fabCradleVerticalOffset="10dp"
+        app:fabCradleRoundedCornerRadius="15dp"
+        android:backgroundTint="@color/white"
+        >
+
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/main_menu_bottom_icons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="0dp"
+            android:fitsSystemWindows="true"
+            app:labelVisibilityMode="labeled"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"
+            app:itemRippleColor="@color/blue_900"
+            app:menu="@menu/bottom_menu"
+            />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_menu_pridaj_zaznam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_record"
+        app:layout_anchor="@id/main_menu_bottom_bar"
+        app:tint="@color/white"
+        android:backgroundTint="@color/blue_900"
+        app:fabSize="normal"
+        />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <Preference
+        app:title="Prepočítať trvalé príkazy"
+        app:summary="Trvalé príkazy sa prepočítavajú vždy pri spustený aplikácie, avšak možete prepočítavanie spustiť aj tu manuálne"
+        app:key="trvalePrikazyPrepocitaj"
+        />
+
+    <Preference
+        app:title="Kontaktovať podporu"
+        app:key="podpora"
+        />
+
+    <Preference
+        app:title="Vymazať všetky dáta"
+        app:key="deleteAllData"
+        />
+
+    <Preference
+        app:title="Odhlásiť sa"
+        app:key="logOut"
+        />
+
+
+</PreferenceScreen>

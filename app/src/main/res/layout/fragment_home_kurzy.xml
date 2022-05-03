@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragmenty.HomeFragmentKurzy">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kurzy_konverzie_mien"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TableLayout
+            android:id="@+id/home_fragment_tab_kurzy_table_meny"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp">
+
+
+            <TableRow
+                android:background="@color/blue_800"
+                android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_mena"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_aktualna_hodnota"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+
+            </TableRow>
+
+            <TableRow android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="EUR"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/home_fragment_tab_kurzy_eur_hodnota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="EUR hodnota"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+            </TableRow>
+
+            <TableRow android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_usd"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/home_fragment_tab_kurzy_usd_hodnota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="USD hodnota"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+            </TableRow>
+
+            <TableRow android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_czk"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/home_fragment_tab_kurzy_czk_hodnota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="CZK hodnota"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+
+            </TableRow>
+
+        </TableLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_margin="10dp"
+            android:background="@color/blue_900"
+            tools:layout_editor_absoluteX="3dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kurzy_konverzie_krypto"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:layout_marginBottom="20dp"/>
+
+        <TableLayout
+            android:id="@+id/home_fragment_tab_kurzy_table_krypto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            >
+
+
+            <TableRow
+                android:background="@color/blue_800"
+                android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_mena"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_aktualna_hodnota"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+
+
+            </TableRow>
+
+            <TableRow android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_bitcoin"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/home_fragment_tab_kurzy_bitcoin_hodnota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="BITCOIN hodnota"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+
+
+            </TableRow>
+
+            <TableRow android:weightSum="8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="@string/kurzy_etherum"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/home_fragment_tab_kurzy_etherum_hodnota"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:text="ETHERUM hodnota"
+                    android:textAlignment="center"
+                    android:textSize="18dp" />
+
+
+            </TableRow>
+
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/kuzry_vzhladom_k_mene"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Prevody sa zobrazujú vzkľadom k mene Euro"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:layout_margin="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kurzy_upozornenie"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:textAlignment="center"
+            />
+
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

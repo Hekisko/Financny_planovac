@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/main_menu_navigation_domov"
+        android:title="Domov"
+        android:icon="@drawable/ic_baseline_home_24"
+
+        />
+    <item android:id="@+id/main_menu_navigation_ucty"
+        android:title="Účty"
+        android:icon="@drawable/ic_wallet"
+
+        />
+    <item android:id="@+id/idEmpty1"
+        android:title=""
+        android:enabled="false"
+        />
+    <item android:id="@+id/main_menu_navigation_prehlady"
+        android:title="Prehľady"
+        android:icon="@drawable/ic_statistics"
+
+        />
+    <item android:id="@+id/main_menu_navigation_nastavenia"
+        android:title="Nastavenia"
+        android:icon="@drawable/ic_baseline_settings_applications_24"
+
+        />
+</menu>

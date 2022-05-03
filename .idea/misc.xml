@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/custom_progress_bar.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/ic_baseline_star_24_selected.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/ic_delete_smaller.xml" value="0.3769230769230769" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/bar_chart_background.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/bottom_navigation_color_selector.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/gradient_background_color.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic__3296393641553239396__1_.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_animal.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_animal_smaller.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.1925925925925926" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_baseline_home_24_checked.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_car.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_car_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_cinka.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_cinka_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_delete.xml" value="0.11927083333333334" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_drogeria.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_drogeria_smaller.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_elektro_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_expand_down_warehouse.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_expand_up_warehouse.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_family_smaller.xml" value="0.28229166666666666" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_food.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_food_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_gamepad.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_gamepad_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_hobby_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_home.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_house.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_house_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_linechart.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_money_minus.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_money_plus.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_mountins.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_mountins_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_notebook.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_piechart.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_question_mark.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_question_mark_smaller.xml" value="0.3828125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_transfer.xml" value="0.3769230769230769" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_tshirt.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_tshirt_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_wallet.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable/ic_wallet_smaller.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/activity_auth.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/activity_main_menu.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/dialog_pridaj_zaznam.xml" value="0.25" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/dialog_trvale_prikazy.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/dialog_zobrazenie_zaznamov.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/drop_down_menu_list_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/fragment_home_kurzy.xml" value="0.264" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/fragment_home_rychly_prehlad.xml" value="0.264" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/fragment_menu_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/home_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/nastavenia_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/prehlady_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/pridaj_novy_ucet_fragment.xml" value="0.264" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/stat_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/trvaly_prikaz_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/ucty_fragment.xml" value="0.25" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/ucty_item.xml" value="0.24864130434782608" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/layout/zaznam_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/menu/bottom_menu.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2234375" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/xml/settings_fragment.xml" value="0.25416666666666665" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

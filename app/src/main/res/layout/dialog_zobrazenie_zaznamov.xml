@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Záznamy"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:layout_margin="10dp"
+        android:textColor="@color/blue_800"/>
+
+    <LinearLayout
+        android:id="@+id/zobrazenie_zaznamov_layout_pre_posun_datumu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="10dp">
+
+        <ImageButton
+            android:id="@+id/zobrazenie_zaznamov_dozadu_datum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24"
+            app:tint="@color/black" />
+
+
+        <TextSwitcher
+            android:id="@+id/zobrazenie_zaznamov_text_switcher"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center_horizontal" />
+
+        <ImageButton
+            android:id="@+id/zobrazenie_zaznamov_dopredu_datum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+            app:tint="@color/black" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/zobrazenie_zaznamov_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"/>
+
+</LinearLayout>

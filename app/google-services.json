@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "975005148527",
+    "firebase_url": "https://prehladova-aplikacia-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "prehladova-aplikacia",
+    "storage_bucket": "prehladova-aplikacia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975005148527:android:fde8ac49afc0308541f49a",
+        "android_client_info": {
+          "package_name": "sk.bak"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975005148527-19se169bq26i3gtjndj9kumu0r0lqpp1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sk.bak",
+            "certificate_hash": "69b6cb48eb7881d278e51aacf2cdcbde4d275cc0"
+          }
+        },
+        {
+          "client_id": "975005148527-94d1hccka7q11ndh6psp5vac0p1hlrtf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5-0uRdzhsEA8_JTgbH0_ghIPtR9neYtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975005148527-94d1hccka7q11ndh6psp5vac0p1hlrtf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragmenty.HomeFragmentRychlyPrehlad">
+
+
+    <ProgressBar
+        android:id="@+id/home_fragment_rychly_prehlad_progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:indeterminateDrawable="@drawable/custom_progress_bar"
+        android:indeterminateDuration="@integer/material_motion_duration_long_2"
+        app:layout_constraintBottom_toTopOf="@+id/home_fragment_rychly_prehlad_nacitavanie"
+        app:layout_constraintEnd_toEndOf="@+id/home_fragment_rychly_prehlad_nacitavanie"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/home_fragment_rychly_prehlad_nacitavanie"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.946"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/home_fragment_rychly_prehlad_nacitavanie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prebieha načítavanie"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="20dp"
+        android:background="@color/white"
+        android:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/home_fragment_rychly_prehlad_upozornenie"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Pre zobrazenie rýchleho prehľadu, musíte mať zvolený hlavný účet"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="20dp"
+        android:background="@color/white"
+        android:visibility="visible"/>
+
+
+
+    <ScrollView
+        android:id="@+id/home_fragment_rychly_prehlad_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rychly_prehlad_vydavky_7_dni"
+                android:textAlignment="center"
+                android:textSize="20dp" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/home_fragment_rychly_prehlad_bar_chart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="10dp"
+                android:paddingBottom="20dp"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_margin="10dp"
+                android:background="@color/blue_900"
+                tools:layout_editor_absoluteX="3dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:text="@string/rychly_prehlad_celkovy_zostatok"
+                android:textAlignment="viewStart"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/home_fragment_rychly_prehlad_celkovy_suma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TU BUDE SUMA"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textAlignment="viewEnd"
+                android:textSize="20dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_margin="10dp"
+                android:background="@color/blue_900"
+                tools:layout_editor_absoluteX="3dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:text="@string/rychly_prehlad_zostatok_dnesny_den"
+                android:textAlignment="viewStart"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/home_fragment_rychly_prehlad_dnesny_den"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TU BUDE SUMA"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textAlignment="viewEnd"
+                android:textSize="20dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_margin="10dp"
+                android:background="@color/blue_900"
+                tools:layout_editor_absoluteX="3dp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rychly_prehlad_zostatok_tyzden"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textAlignment="viewStart"
+                android:textSize="20dp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/home_fragment_rychly_prehlad_tyzden"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TU BUDE SUMA"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:visibility="gone"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_margin="10dp"
+                android:background="@color/blue_900"
+                tools:layout_editor_absoluteX="3dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rychly_prehlad_zostatok_mesiac"
+                android:textAlignment="viewStart"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/home_fragment_rychly_prehlad_koniec_mesiaca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TU BUDE SUMA"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="20dp"
+                android:layout_marginBottom="50dp"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,211 @@
+<resources>
+    <string name="app_name">Finančný plánovač</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Rychly prehlad -->
+    <string name="rychly_prehlad_vydavky_7_dni">Výdavky za posledných 7 dní</string>
+    <string name="rychly_prehlad_celkovy_zostatok">Celkový zostatok na účte</string>
+    <string name="rychly_prehlad_zostatok_dnesny_den">Zostatok na dnešný deň</string>
+    <string name="rychly_prehlad_zostatok_tyzden">Zostatok na týždeň</string>
+    <string name="rychly_prehlad_zostatok_mesiac">Zostatok do konca mesiaca</string>
+
+    <!-- Rychly prehlad -->
+    <string name="kurzy_konverzie_mien">Aktuálne konverzie hlavných svetových mien</string>
+    <string name="kurzy_mena">Mena</string>
+    <string name="kurzy_aktualna_hodnota">Aktuálna hodnota</string>
+    <string name="kurzy_usd">USD</string>
+    <string name="kurzy_czk">CZK</string>
+    <string name="kurzy_konverzie_krypto">Aktuálne hodnoty hlavných svetových krypto mien</string>
+    <string name="kurzy_bitcoin">BITCOIN</string>
+    <string name="kurzy_etherum">ETHERUM</string>
+    <string name="kurzy_upozornenie">Upozornenie. Prevodové hodnoty sú len orientačné. V každej inštitúcii sa kurzy líšia, preto si ich vždy overujte aj v danej inštitúcii.</string>
+
+
+    <!-- Ucty -->
+    <string name="bezny_ucet">Bežny účet</string>
+    <string name="sporiaci_ucet">Sporiaci účet</string>
+    <string name="krypto_ucet">Krypto účet</string>
+    <string name="fragment_ucty_card_nazov_uctu">Názov účtu</string>
+    <string name="fragment_ucty_card_typ_uctu">Typ účtu</string>
+    <string name="fragment_ucty_card_suma_na_ucte">Aktuálny zostatok</string>
+
+
+    <!-- Arrays -->
+    <string-array name="typy_uctov">
+        <item>Bežný účet</item>
+        <item>Sporiaci účet</item>
+        <item>Krypto peňaženka</item>
+    </string-array>
+
+    <string-array name="meny_uctov">
+        <item>Euro</item>
+        <item>Americký dolár</item>
+        <item>Česká koruna</item>
+        <item>Bitcoin</item>
+        <item>Etherum</item>
+    </string-array>
+
+    <string-array name="meny_uctov_skratka">
+        <item>EUR</item>
+        <item>USD</item>
+        <item>CZK</item>
+        <item>BTC</item>
+        <item>ETC</item>
+    </string-array>
+
+    <string-array name="dni_pre_splatnost">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+
+    </string-array>
+
+
+    <!-- zdroj https://www.umeniekreativity.sk/citaty-o-peniazoch/-->
+    <string-array name="citaty">
+        <item>Nikdy nemiň peniaze, pokým si ich nezarobil.</item>
+        <item>Je dobré mať peniaze a veci, ktoré si za ne kúpite, no tiež je dobré raz za čas uistiť sa, že ste neprišli o veci, ktoré si za peniaze nekúpite.</item>
+        <item>Je obrovský rozdiel medzi zarábať veľa peňazí a byť bohatý.</item>
+        <item>Peniaze zvyčajne priťahujete, nie sa za nimi pachtíte.</item>
+        <item>Ak ovládame naše bohatstvo, budeme bohatí a voľní. Ak však naše bohatstvo ovláda nás, budeme skutočne chudobní.</item>
+        <item>Jednoduchá vec, ktorá sa ťažko učí, je, že šetrí sa vtedy, keď máte peniaze.</item>
+        <item>Nehovorte mi, aké máte priority. Ukážte mi, ako míňate peniaze a poviem vám, aké ich máte.</item>
+        <item>Mnoho ľudí si myslí, že nevedia zarábať peniaze, pritom ale nevedia, ako ich využiť.</item>
+        <item>Mnoho ľudí sa absolútne nestará o svoje peniaze, kým o ne neprídu. Iní robia to isté so svojím časom.</item>
+        <item>Peniaze sú len nástroj. Dostanú ťa, kam si budeš želať, no nenahradia ťa na mieste vodiča</item>
+        <item>Peniaze sú hrozným pánom, no vynikajúcim sluhom.</item>
+        <item>Musíte získať kontrolu nad svojimi peniazmi, pretože jej nedostatok ťa navždy ovládne.</item>
+        <item>Nie je to o tom, koľko zarobíš, ale koľko si odložíš, ako dobre to dokážeš, a pre koľko generácií ich ušetríš.</item>
+        <item>Zvyk šetriť je vzdelaním samým o sebe. Posilňuje každú cnosť, učí sebazapretiu. kultivuje zmysel pre poriadok, cvičí v predvídavosti, a tak rozširuje tvoju myseľ.</item>
+        <item>Múdry človek by mal mať peniaze v hlave, nie v srdci.</item>
+        <item>Najrýchlejší spôsob, ako zdvojnásobiť svoje peniaze, je zložiť ich na polovicu a vložiť si ich do zadného vrecka.</item>
+        <item>Príliš mnoho ľudí míňajú zarobené peniaze na kúpu vecí, ktoré nechcú, aby zapôsobili na ľudí, ktorých neznášajú.</item>
+        <item>Peniaze sú zárukou, že možno v budúcnosti budeme mať to, čo chceme. Hoci teraz nič nepotrebujeme, zaistia možnosť, že keď sa nová túžba objaví, môžeme ju uspokojiť.</item>
+        <item>Bohatstvo nespočíva v tom, že vlastníte mnoho vecí, ale v tom, že túžite po mále.</item>
+        <item>Peniaze často stoja priveľa.</item>
+        <item>Každý deň je váš bankový účet, čas je menou. Nikto nie je bohatý, nikto nie je chudobný, každý má 24 hodín.</item>
+        <item>Spôsob, ako pristupujete k zlyhaniu, určí, ako nadobudnete úspech.</item>
+        <item>Investícia do vzdelania prinesie najlepšie úroky.</item>
+        <item>Poviem vám tajomstvo, ako na Wall Street zbohatnete. Buďte skúpi, keď ostatní sú obozretní. Buďte obozretní, keď ostatní sú skúpi.</item>
+        <item>Väčšina ľudí si príležitosť nevšimne, pretože je oblečená do montérok a vyzerá ako práca.</item>
+        <item>Peniaze nikdy nespravili človeka šťastným, ani to nespravia. Čím viac má, tým viac chce. Namiesto toho, aby vyplnili prázdnotu, jednu vytvorí.</item>
+        <item>Bežné vzdelanie vám zaistí živobytie. Samovzdelanie vám zaistí bohatstvo.</item>
+        <item>Chudobný nie je ten, kto má málo, ale ten, kto túži po ďalšom.</item>
+        <item>Výplatu neprináša zamestnávateľ. Ten len narába s peniazmi. To zákazník prináša výplatu.</item>
+        <item>Kto príde o peniaze, príde o veľa. Kto príde o priateľa, príde ešte o viac. Kto príde o vieru, príde o všetko.</item>
+        <item>Prázdne vrecká ešte nikoho nezastavili. Dokážu to iba prázdne hlavy a srdce.</item>
+        <item>Kupujte, keď všetci ostatní predávajú a vydržte, kým všetci nekupujú. To nie je len chytľavý slogan. To je podstata úspešného investovania.</item>
+        <item>Ak dúfate, že peniaze vám zaručia nezávislosť, nikdy ju nedostanete. Jediná istota na tomto svete, ktorú človek môže mať, je dostatok vedomostí, skúseností a schopností.</item>
+        <item>Koľko poznáte milionárov, ktorí zbohatli investovaním do sporiacich účtov? Tým som všetko povedal.</item>
+        <item>Svoje peniaze som získal starým dobrým spôsobom. Bol som veľmi milý k príbuznému predtým, než zomrel.</item>
+        <item>Inovácia je rozdiel medzi lídrom a tým, čo nasleduje.</item>
+        <item>Skutočnou hodnotou vášho bohatstva je vaša hodnota, keď prídete o všetky peniaze.</item>
+        <item>Začnite si šetriť, keď zarábate málo. Bude to nemožné, keď začnete zarábať viac.</item>
+        <item>Bohatstvo je schopnosť naplno zažiť život.</item>
+        <item>Skutočne verím v šťastie. Zistil som, že čím ťažšie pracujem, tým viac ho mám.</item>
+        <item>Investovanie by malo byť skôr ako sledovať schúť farbu alebo rásť trávu. Ak chcete vzrušenie, choďte s osemsto dolármi do Las Vegas.</item>
+        <item>Vždy, keď si požičiate peniaze, okrádate svoje budúce ja.</item>
+        <item>Bohatí ľudia majú malé televízory a veľké knižnice. Chudobní majú malé knižnice a veľké televízory.</item>
+        <item>Dôležitá nie je situácia, ale to, či zareagujeme (negatívum), alebo odpovieme (pozitívum).</item>
+        <item>Hovorí sa, že motivácia nevydrží. To ani kúpanie, a preto ho odporúčame každý deň.</item>
+        <item>Akciový trh je plný ľudí, ktorí poznajú cenu všetkého, ale hodnotu ničoho.</item>
+        <item>Ak si neceníte svoj čas, nebudú si ho ceniť ani iní. Prestaňte márniť svoj čas a nadanie. Ceňte si, čo viete a začnite si za to pýtať peniaze.</item>
+        <item>Ak žijete, aby ste mali všetko, to, čo máte, nestačí.</item>
+        <item>Úspešný je ten, kto dokáže postaviť pevné základy z tehál, ktoré iní naňho hodili.</item>
+        <item>Nech ten, kto si chce užiť budúcnosť, nemárni svoju prítomnosť.</item>
+        <item>Úspešný bojovník je bežný človek, ktorý sa zameral na cieľ.</item>
+        <item>Otázka nestojí tak, že kto mi to dovolí, ale kto ma zastaví.</item>
+        <item>Dočerta s tým, spravme to!</item>
+        <item>Ak vaša loď nepripláva, plávajte smerom k nej.</item>
+        <item>Úspech sú kroky od jedného zlyhania k druhému bez straty nadšenia.</item>
+    </string-array>
+
+    <string-array name="autory">
+        <item>– Thomas Jefferson</item>
+        <item>– George Lorimer</item>
+        <item>– Marlene Dietrich</item>
+        <item>– Jim Rohn</item>
+        <item>– Edmund Burke</item>
+        <item>– Joe Moore</item>
+        <item>– James W. Frick</item>
+        <item>– Frank A. Clark</item>
+        <item>– Johann Wolfgang von Goethe</item>
+        <item>– Ayn Rand</item>
+        <item>- T. Barnum</item>
+        <item>– Dave Ramsey</item>
+        <item>– Robert Kiyosaki</item>
+        <item>– T. T. Munger</item>
+        <item>– Jonathan Swift</item>
+        <item>– Will Rogers</item>
+        <item>– Will Rogers</item>
+        <item>– Aristoteles</item>
+        <item>– Epiktetus</item>
+        <item>– Ralph Waldo Emerson</item>
+        <item>– Christopher Rice</item>
+        <item>– David Feherty</item>
+        <item>– Benjamin Franklin</item>
+        <item>– Warren Buffett</item>
+        <item>– Thomas Edison</item>
+        <item>– Benjamin Franklin</item>
+        <item>– Jim Rohn</item>
+        <item>– Seneca</item>
+        <item>– Henry Ford</item>
+        <item>– Eleanor Roosevelt</item>
+        <item>– Norman Vincent Peale</item>
+        <item>– J. Paul Getty</item>
+        <item>– Henry Ford</item>
+        <item>– Robert G. Allen</item>
+        <item>– Malcolm Forbes</item>
+        <item>– Steve Jobs</item>
+        <item>– Anonym</item>
+        <item>– Jack Benny</item>
+        <item>– Henry David Thoreau</item>
+        <item>– Thomas Jefferson</item>
+        <item>– Paul Samuelson</item>
+        <item>– Nathan W. Morris</item>
+        <item>– Zig Ziglar</item>
+        <item>– Zig Ziglar</item>
+        <item>– Zig Ziglar</item>
+        <item>– Phillip Fisher</item>
+        <item>– Kim Garst</item>
+        <item>– Vicki Robin</item>
+        <item>– David Brinkley</item>
+        <item>– Rober Babson</item>
+        <item>– Bruce Lee</item>
+        <item>– Ayn Rand</item>
+        <item>– Richard Branson</item>
+        <item>– Jonathan Winters</item>
+        <item>– Winston Churchill</item>
+    </string-array>
+
+</resources>
