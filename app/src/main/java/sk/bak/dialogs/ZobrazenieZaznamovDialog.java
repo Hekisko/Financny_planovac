@@ -55,7 +55,7 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
     private Activity parentActivity;
 
-    private TahanieDataZDBBradcastReciever serviceReceiver;
+    //private TahanieDataZDBBradcastReciever serviceReceiver;
 
     private String nazovUctu;
 
@@ -132,9 +132,9 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
         adapterRecyclerView.notifyDataSetChanged();
 
-        serviceReceiver = new TahanieDataZDBBradcastReciever();
-        IntentFilter intentSFilter = new IntentFilter("dataOk");
-        getContext().registerReceiver(serviceReceiver, intentSFilter);
+        //serviceReceiver = new TahanieDataZDBBradcastReciever();
+        //IntentFilter intentSFilter = new IntentFilter("dataOk");
+        //getContext().registerReceiver(serviceReceiver, intentSFilter);
 
     }
 
@@ -268,21 +268,21 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
     }
 
-    public class TahanieDataZDBBradcastReciever extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-
-            if (intent.getBooleanExtra("ended", false)) {
-
-                zoznamZaznamov.clear();
-                zoznamZaznamov.addAll(DatabaseManager.getZaznamy());
-                adapterRecyclerView.notifyDataSetChanged();
-
-            }
-        }
-    }
+    //public class TahanieDataZDBBradcastReciever extends BroadcastReceiver {
+//
+    //    @Override
+    //    public void onReceive(Context context, Intent intent) {
+//
+//
+    //        if (intent.getBooleanExtra("ended", false)) {
+//
+    //            zoznamZaznamov.clear();
+    //            zoznamZaznamov.addAll(DatabaseManager.getZaznamy());
+    //            adapterRecyclerView.notifyDataSetChanged();
+//
+    //        }
+    //    }
+    //}
 
 
 
