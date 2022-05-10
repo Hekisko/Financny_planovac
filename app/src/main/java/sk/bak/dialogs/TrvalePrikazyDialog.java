@@ -144,7 +144,6 @@ public class TrvalePrikazyDialog extends Dialog {
     @Override
     protected void onStop() {
         super.onStop();
-
         if (valueEventListener != null) {
             DatabaseManager.getDb()
                     .child("trvalePrikazy")

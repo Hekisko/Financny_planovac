@@ -1114,4 +1114,14 @@ public class PrehladyFragment extends Fragment {
 
      */
 
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (databaseReferenceListeningAt != null && pouzivanyListner != null) {
+            databaseReferenceListeningAt.removeEventListener(pouzivanyListner);
+            databaseReferenceListeningAt = null;
+            pouzivanyListner = null;
+        }
+    }
 }
