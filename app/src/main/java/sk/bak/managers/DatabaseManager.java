@@ -278,6 +278,24 @@ public class DatabaseManager {
         Log.i(TAG, "saveTrvalyPrikaz: DONE");
     }
 
+    public static void saveTrvalyPrikaz(String nazovUctu, VlozenyZaznam zaznam, Date datumZmeny) {
+        Log.i(TAG, "saveTrvalyPrikaz: START");
+        String id = db.child("trvalePrikazy").child(nazovUctu).push().getKey();
+        if (id == null) {
+            Log.i(TAG, "onDataChange trvaly prikaz: neexistuje ");
+            return;
+        }
+
+        zaznam.setId(id);
+
+        TrvalyPrikaz trvalyPrikaz = new TrvalyPrikaz();
+        trvalyPrikaz.setZaznam(zaznam);
+        trvalyPrikaz.setPoslednaKontrola(datumZmeny);
+
+        db.child("trvalePrikazy").child(nazovUctu).child(id).setValue(trvalyPrikaz);
+        Log.i(TAG, "saveTrvalyPrikaz: DONE");
+    }
+
     public static void saveTrvalyPrikazSporiaci(String nazovUctu, VlozenyZaznam zaznam, Double percentoZuctovania) {
 
         Log.i(TAG, "saveTrvalyPrikazSporiaci: START");
@@ -294,6 +312,27 @@ public class DatabaseManager {
         trvalyPrikaz.setSporiaci(true);
         trvalyPrikaz.setPercentoZúčtovania(percentoZuctovania);
         trvalyPrikaz.setPoslednaKontrola(null);
+
+        db.child("trvalePrikazy").child(nazovUctu).child(id).setValue(trvalyPrikaz);
+        Log.i(TAG, "saveTrvalyPrikazSporiaci: DONE");
+    }
+
+    public static void saveTrvalyPrikazSporiaci(String nazovUctu, VlozenyZaznam zaznam, Double percentoZuctovania, Date poslednaKontrola) {
+
+        Log.i(TAG, "saveTrvalyPrikazSporiaci: START");
+        String id = db.child("trvalePrikazy").child(nazovUctu).push().getKey();
+        if (id == null) {
+            Log.i(TAG, "onDataChange trvaly prikaz: neexistuje ");
+            return;
+        }
+
+        zaznam.setId(id);
+
+        TrvalyPrikaz trvalyPrikaz = new TrvalyPrikaz();
+        trvalyPrikaz.setZaznam(zaznam);
+        trvalyPrikaz.setSporiaci(true);
+        trvalyPrikaz.setPercentoZúčtovania(percentoZuctovania);
+        trvalyPrikaz.setPoslednaKontrola(poslednaKontrola);
 
         db.child("trvalePrikazy").child(nazovUctu).child(id).setValue(trvalyPrikaz);
         Log.i(TAG, "saveTrvalyPrikazSporiaci: DONE");
@@ -502,9 +541,11 @@ public class DatabaseManager {
         int nacitavam = 0;
 
         while (sharedPreferences.getLong("kurzy_update_date") == 0) {
-            if (nacitavam == 0) {
-                Utils.nacitajKurzy(sharedPreferences, context);
-                nacitavam = 1;
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception exception) {
+
             }
 
         }
@@ -534,6 +575,62 @@ public class DatabaseManager {
                 Log.i(TAG, "onComplete mazanie vsetky dat: DONE");
             }
         });
+    }
+
+    public static void najdiAVymazTrvalyPrikaz(String nazovUctu, String vyhladavanyString, Vydaj novyTrvalyPrikaz) {
+
+        db.child("trvalePrikazy").child(nazovUctu).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Log.i(TAG, "onDataChange zaplatTrvalePrikazy: zatial ziadne data");
+                    return;
+                }
+
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    TrvalyPrikaz trvalyPrikaz = dataSnapshot.getValue(TrvalyPrikaz.class);
+                    if (trvalyPrikaz.getZaznam().getPoznamka().equals(vyhladavanyString)) {
+                        saveTrvalyPrikaz(nazovUctu, novyTrvalyPrikaz, trvalyPrikaz.getPoslednaKontrola());
+                        db.child("trvalePrikazy").child(nazovUctu).child(dataSnapshot.getKey()).removeValue();
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    public static void najdiAVymazTrvalyPrikaz(String nazovUctu, boolean isSporiaci, Prijem novyTrvalyPrikaz, Double percentoZuctovania) {
+
+        db.child("trvalePrikazy").child(nazovUctu).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Log.i(TAG, "onDataChange zaplatTrvalePrikazy: zatial ziadne data");
+                    return;
+                }
+
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    TrvalyPrikaz trvalyPrikaz = dataSnapshot.getValue(TrvalyPrikaz.class);
+                    if (trvalyPrikaz.isSporiaci()) {
+                        saveTrvalyPrikazSporiaci(nazovUctu, novyTrvalyPrikaz, percentoZuctovania, trvalyPrikaz.getPoslednaKontrola());
+                        db.child("trvalePrikazy").child(nazovUctu).child(dataSnapshot.getKey()).removeValue();
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 }
 

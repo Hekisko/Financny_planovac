@@ -10,9 +10,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,10 +26,8 @@ import sk.bak.model.BeznyUcet;
 import sk.bak.model.CryptoUcet;
 import sk.bak.model.Prijem;
 import sk.bak.model.SporiaciUcet;
-import sk.bak.model.TrvalyPrikaz;
 import sk.bak.model.Vydaj;
 import sk.bak.model.abst.Ucet;
-import sk.bak.model.abst.VlozenyZaznam;
 import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
@@ -215,6 +211,12 @@ public class PridajNovyUcet extends Dialog {
                             zuctovanie.setDenSplatnosti(calendar.get(Calendar.DAY_OF_MONTH));
                             zuctovanie.setCasZadania(Calendar.getInstance().getTime());
 
+
+                            if (prebiehaEdit) {
+                                DatabaseManager.najdiAVymazTrvalyPrikaz(nazov.getEditText().getText().toString(), true, zuctovanie, Double.parseDouble(percentoZuctovania.getEditText().getText().toString()));
+                                break;
+                            }
+
                             DatabaseManager.saveTrvalyPrikazSporiaci(nazov.getEditText().getText().toString(), zuctovanie,Double.parseDouble(percentoZuctovania.getEditText().getText().toString()));
 
 
@@ -247,6 +249,15 @@ public class PridajNovyUcet extends Dialog {
                         vedenieUctu.setTypVydaju(TypVydaju.OSTATNE);
                         vedenieUctu.setDenSplatnosti(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
                         vedenieUctu.setCasZadania(Calendar.getInstance().getTime());
+
+                        if (prebiehaEdit && Double.parseDouble(poplatokZaVedenieUctu.getEditText().getText().toString()) == ucet.getPoplatokZaVedenie()) {
+                            currentDialog.cancel();
+                            return;
+                        } else if (prebiehaEdit) {
+                            DatabaseManager.najdiAVymazTrvalyPrikaz(nazov.getEditText().getText().toString(), "Poplatok za vedenie účtu", vedenieUctu);
+                            currentDialog.cancel();
+                            return;
+                        }
 
                         DatabaseManager.saveTrvalyPrikaz( nazov.getEditText().getText().toString(),vedenieUctu);
                         Log.i(TAG, "onClick ucet bol sporiaci: vytvaranie trvaleho prikazu DONE");

@@ -33,6 +33,7 @@ import sk.bak.managers.DatabaseManager;
 import sk.bak.utils.Constants;
 import sk.bak.utils.MySharedPreferences;
 import sk.bak.utils.SecurityCheck;
+import sk.bak.utils.Utils;
 
 public class MainMenu extends AppCompatActivity {
 
@@ -62,6 +63,7 @@ public class MainMenu extends AppCompatActivity {
         }
         Constants.PREF_NAME = packageInfoSingleton.packageName;
         sharedPreferences = new MySharedPreferences(getApplicationContext());
+        Utils.nacitajKurzy(sharedPreferences, getApplicationContext());
         Log.i(TAG, "onCreate: inicializujem shared pref DONE");
 
 

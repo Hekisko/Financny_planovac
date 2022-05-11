@@ -5,9 +5,11 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
@@ -76,6 +78,12 @@ public class AuthActivity extends AppCompatActivity {
 
                         } catch (ApiException e) {
                             Log.i(TAG, "onActivityResult: google sing in Nok" + e.getMessage());
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(currentActivity);
+
+                            alertDialogBuilder.setMessage("Nastala chyba pri pokuse o prihlásenie sa do Google účtu. Pokus opakujte. Overte si propojenie na internet");
+
+                            alertDialogBuilder.setPositiveButton("Ok", null);
+                            alertDialogBuilder.create().show();
                             // The ApiException status code indicates the detailed failure reason.
                             // Please refer to the GoogleSignInStatusCodes class reference for more information.
                         }
@@ -129,8 +137,17 @@ public class AuthActivity extends AppCompatActivity {
                             currentActivity.finish();
                         } else {
                             Log.i(TAG, "onComplete: firebase Nok");
-                            // If sign in fails, display a message to the user.
-                            signIn(true);
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(currentActivity);
+
+                            alertDialogBuilder.setMessage("Nastala chyba pri pokuse o prihlásenie sa do databázy. Pokus opakujte. Overte si propojenie na internet, Pokus po odkliknutí tohto okna budeme automaticky opakovať");
+
+                            alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    signIn(true);
+                                }
+                            });
+                            alertDialogBuilder.create().show();
                         }
                     }
                 });

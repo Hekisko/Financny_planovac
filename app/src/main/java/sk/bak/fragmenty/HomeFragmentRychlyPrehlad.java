@@ -2,6 +2,7 @@ package sk.bak.fragmenty;
 
 import static android.view.View.GONE;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -29,6 +30,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -41,6 +43,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -58,6 +61,8 @@ import sk.bak.model.abst.VlozenyZaznam;
 import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.enums.TypyUctov;
+import sk.bak.utils.MySharedPreferences;
+import sk.bak.utils.Utils;
 
 
 public class HomeFragmentRychlyPrehlad extends Fragment {
@@ -84,16 +89,26 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
     private static final String TAG = "HomeFragmentRychlyPrehlad";
 
-    Map<Integer, List<Double>> sumyMinuteZaPoslednych7Dni;
+    private Map<Integer, List<Double>> sumyMinuteZaPoslednych7Dni;
+
+    private ValueEventListener celkovyListener;
+
+    private ValueEventListener listenerNaUcty;
+    private ValueEventListener listenerNaTrvalePrikazy;
+    private ValueEventListener listenerNaZaznamyAktualnyMesiac;
+    private ValueEventListener listenerNaZaznamyMinulyMesiac;
+
+    private List<Prijem> zaznamyPrijem;
+    private List<Vydaj> zaznamyVydaj;
 
 
-    ValueEventListener listenerNaUcty;
-    ValueEventListener listenerNaTrvalePrikazy;
-    ValueEventListener listenerNaZaznamyAktualnyMesiac;
-    ValueEventListener listenerNaZaznamyMinulyMesiac;
+    private Double vydajeCelkovo = .0;
+    private Double prijmyCelkovo = .0;
+    private Double chcemaUsetrenaSumaCelkovo = .0;
+    private Double zostatokCelkovo = .0;
+    private MySharedPreferences sharedPreferences;
 
-    List<Prijem> zaznamyPrijem;
-    List<Vydaj> zaznamyVydaj;
+    private Meny zvolenaMena;
 
     public HomeFragmentRychlyPrehlad() {
         // Required empty public constructor
@@ -111,6 +126,8 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         currentView = inflater.inflate(R.layout.fragment_home_rychly_prehlad, container, false);
+
+        sharedPreferences = new MySharedPreferences(getContext());
 
         scrollView = currentView.findViewById(R.id.home_fragment_rychly_prehlad_scroll_view);
         upozornenie = currentView.findViewById(R.id.home_fragment_rychly_prehlad_upozornenie);
@@ -134,7 +151,269 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
     private void initListners() {
 
-        listenerNaUcty = new ValueEventListener() {
+        celkovyListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                Calendar aktualnyDatum = Calendar.getInstance();
+                String rokMesiacAktualny = aktualnyDatum.get(Calendar.YEAR) + "_" + (aktualnyDatum.get(Calendar.MONTH) + 1);
+
+                Double chcemaUsetrenaSumaCelkovo = .0;
+                Double zostatokCelkovo = .0;
+
+                zaznamyPrijem = new ArrayList<>();
+                zaznamyVydaj = new ArrayList<>();
+                ucty = new ArrayList<>();
+
+                if (!snapshot.exists()) {
+                    nacitavanieText.setVisibility(GONE);
+                    nacitavanieProgressBar.setVisibility(GONE);
+                    scrollView.setVisibility(GONE);
+                    upozornenie.setVisibility(View.VISIBLE);
+                    upozornenie.setText("Nie sú k dispozícii žiadne dáta.");
+                    return;
+                }
+
+
+                //hladam hlavny ucet pre urcenie meny v akej sa to bude zobrazovat, ak hlavny ucet nie je, tak je to Euro
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+                    if (dataSnapshot.getKey().equals("ucty")) {
+                        for (DataSnapshot uctySnapshot: dataSnapshot.getChildren()) {
+                            Ucet ucet = uctySnapshot.getValue(Ucet.class);
+                            if (ucet.isJeHlavnyUcet()) {
+                                hlavnyUcet = uctySnapshot.getValue(BeznyUcet.class);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+
+                if (hlavnyUcet == null) {
+                    zvolenaMena = Meny.EUR;
+                } else {
+                    zvolenaMena = hlavnyUcet.getMena();
+                }
+
+                for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+
+                    if (dataSnapshot.getKey().equals("ucty")) {
+
+                        for (DataSnapshot uctySnapshot: dataSnapshot.getChildren()) {
+                            Ucet ucet = uctySnapshot.getValue(Ucet.class);
+
+                            zostatokCelkovo += transferIfNecessery(ucet.getAktualnyZostatok(), zvolenaMena, ucet.getMena());
+
+                            if (ucet.getTypUctu() == TypyUctov.BEZNY) {
+
+                                BeznyUcet beznyUcet = uctySnapshot.getValue(BeznyUcet.class);
+                                chcemaUsetrenaSumaCelkovo += transferIfNecessery(beznyUcet.getChcenaMesacneUsetrenaSuma(), zvolenaMena, beznyUcet.getMena());
+
+                            } else if (ucet.getTypUctu() == TypyUctov.SPORIACI) {
+
+                                SporiaciUcet sporiaciUcet = uctySnapshot.getValue(SporiaciUcet.class);
+
+                            } else if (ucet.getTypUctu() == TypyUctov.KRYPTO) {
+
+                                CryptoUcet cryptoUcet = uctySnapshot.getValue(CryptoUcet.class);
+                            }
+                        }
+
+                    }
+
+                    if (dataSnapshot.getKey().equals("trvalePrikazy")) {
+
+                        for (DataSnapshot trvalePrikazyUcty: dataSnapshot.getChildren()) {
+
+                            for (DataSnapshot trvalyPrikaz: trvalePrikazyUcty.getChildren()) {
+
+                                TrvalyPrikaz trvalyPrikazAktualny = trvalyPrikaz.getValue(TrvalyPrikaz.class);
+
+                                if (!trvalyPrikazAktualny.isSporiaci()) {
+                                    if (trvalyPrikazAktualny.getZaznam().getDenSplatnosti() > aktualnyDatum.get(Calendar.DAY_OF_MONTH)) {
+                                        if (trvalyPrikazAktualny.getZaznam().getTypZaznamu() == TypZaznamu.PRIJEM) {
+                                            Prijem novyPrijem = new Prijem();
+                                            novyPrijem.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                            novyPrijem.setMena(trvalyPrikazAktualny.getZaznam().getMena());
+
+                                            zaznamyPrijem.add(novyPrijem);
+                                        } else {
+                                            Vydaj novyVydaj =  new Vydaj();
+                                            novyVydaj.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                            novyVydaj.setMena(trvalyPrikazAktualny.getZaznam().getMena());
+
+                                            zaznamyVydaj.add(novyVydaj);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    if (dataSnapshot.getKey().equals("zaznamy")) {
+
+                        for (DataSnapshot zaznamyUcty: dataSnapshot.getChildren()) {
+
+                            for (DataSnapshot zaznamyDatumy: zaznamyUcty.getChildren()) {
+
+                                if (zaznamyDatumy.getKey().equals(rokMesiacAktualny)) {
+
+                                    for (DataSnapshot zaznamy: zaznamyDatumy.getChildren()) {
+
+                                        VlozenyZaznam zaznam = zaznamy.getValue(VlozenyZaznam.class);
+
+                                        if (zaznam.getTypZaznamu() == TypZaznamu.PRIJEM) {
+                                            zaznamyPrijem.add(zaznamy.getValue(Prijem.class));
+                                        } else {
+                                            zaznamyVydaj.add(zaznamy.getValue(Vydaj.class));
+                                        }
+
+                                        /*
+                                        if (zaznam.getTypZaznamu() == TypZaznamu.PRIJEM) {
+                                            prijmyCelkovo += transferIfNecessery(zaznam.getSuma(), zvolenaMena, zaznam.getMena());
+                                        } else {
+                                            vydajeCelkovo += transferIfNecessery(zaznam.getSuma(), zvolenaMena, zaznam.getMena());
+                                        }
+
+                                         */
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+
+                Log.i(TAG, "onDataChange: zacinam pocitat sumy");
+                Double mesacnaSumaPrijem = spocitajPrijem(zaznamyPrijem);
+
+                Double mesacnaSumaNaMinanie = mesacnaSumaPrijem - chcemaUsetrenaSumaCelkovo;
+
+                Double sumaNaMinutieNaJedenDen = mesacnaSumaNaMinanie / (double) aktualnyDatum.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                Double dnesMinutaSuma = .0;
+                Double sumyMinutaZaCelyMesaic = .0;
+
+                sumyMinuteZaPoslednych7Dni = new TreeMap<>();
+                Calendar kalendarNaPosunDatumu = Calendar.getInstance();
+
+                for (int i = 7; i > 0; i--) {
+                    sumyMinuteZaPoslednych7Dni.put(kalendarNaPosunDatumu.get(Calendar.DAY_OF_MONTH), new ArrayList<>());
+                    kalendarNaPosunDatumu.add(Calendar.DAY_OF_MONTH, -1);
+                }
+
+                // posledny den kedy sa ma brat zaznam
+                kalendarNaPosunDatumu.add(Calendar.DAY_OF_MONTH, 1);
+
+                Calendar casZadania = Calendar.getInstance();
+                for (Vydaj vydaj: zaznamyVydaj) {
+
+                    sumyMinutaZaCelyMesaic += transferIfNecessery(vydaj.getSuma(), zvolenaMena, vydaj.getMena());
+
+                    casZadania.setTime(vydaj.getCasZadania());
+
+                    if (casZadania.get(Calendar.DAY_OF_MONTH) == aktualnyDatum.get(Calendar.DAY_OF_MONTH)) {
+                        dnesMinutaSuma += transferIfNecessery(vydaj.getSuma(), zvolenaMena, vydaj.getMena());
+                    }
+
+                    List<Double> sumyZaDanyDen = sumyMinuteZaPoslednych7Dni.get(casZadania.get(Calendar.DAY_OF_MONTH));
+                    if (sumyZaDanyDen != null) {
+                        sumyZaDanyDen.add(transferIfNecessery(vydaj.getSuma(), zvolenaMena, vydaj.getMena()));
+                    }
+
+                }
+
+                int pocetOstavajucichDniVMesiaci = aktualnyDatum.getActualMaximum(Calendar.DAY_OF_MONTH) - aktualnyDatum.get(Calendar.DAY_OF_MONTH) + 1;
+                Double ostavajucaSumaNaMesiac = mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic;
+
+
+                if (zvolenaMena == Meny.BTC || zvolenaMena == Meny.ETH) {
+                    celkovyZostatok.setText(String.format("%.8f %s", zostatokCelkovo, zvolenaMena.getZnak()));
+                    dnesnyDen.setText(String.format("%.8f %s", ostavajucaSumaNaMesiac / pocetOstavajucichDniVMesiaci, zvolenaMena.getZnak()));
+                    mesiac.setText(String.format("%.8f %s", mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic, zvolenaMena.getZnak()));
+                } else {
+                    celkovyZostatok.setText(String.format("%.02f %s", zostatokCelkovo, zvolenaMena.getZnak()));
+                    dnesnyDen.setText(String.format("%.02f %s", ostavajucaSumaNaMesiac / pocetOstavajucichDniVMesiaci, zvolenaMena.getZnak()));
+                    mesiac.setText(String.format("%.02f %s", mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic, zvolenaMena.getZnak()));
+                }
+
+
+                if (aktualnyDatum.get(Calendar.MONTH) == kalendarNaPosunDatumu.get(Calendar.MONTH)) {
+
+                    Log.i(TAG, "onDataChange: trvaleprikazy init barchart");
+                    initBarChart();
+
+                } else {
+
+                    Calendar minulyMesiac = Calendar.getInstance();
+                    minulyMesiac.add(Calendar.MONTH, -1);
+
+                    String rokMesiacPredosli = minulyMesiac.get(Calendar.YEAR) + "_" + (minulyMesiac.get(Calendar.MONTH) + 1);
+
+                    int pocetDniZMinulehoMesiaca = 7 - aktualnyDatum.get(Calendar.DAY_OF_MONTH);
+                    int odDna = minulyMesiac.getActualMaximum(Calendar.DAY_OF_MONTH) - pocetDniZMinulehoMesiaca;
+
+                    for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
+
+                        if (dataSnapshot.getKey().equals("zaznamy")) {
+
+                            for (DataSnapshot zaznamyUcty: dataSnapshot.getChildren()) {
+
+                                for (DataSnapshot zaznamyDatumy: zaznamyUcty.getChildren()) {
+
+                                    if (zaznamyDatumy.getKey().equals(rokMesiacPredosli)) {
+
+
+                                        for (DataSnapshot zaznamy: zaznamyDatumy.getChildren()) {
+
+                                            VlozenyZaznam zaznam = zaznamy.getValue(VlozenyZaznam.class);
+
+                                            if (zaznam.getTypZaznamu() == TypZaznamu.VYDAJ) {
+                                                Vydaj zaznamVydaj = zaznamy.getValue(Vydaj.class);
+                                                Calendar casZadaniaMinulyMesiac = Calendar.getInstance();
+                                                casZadaniaMinulyMesiac.setTime(zaznamVydaj.getCasZadania());
+
+                                                List<Double> sumyZaDanyDen = sumyMinuteZaPoslednych7Dni.get(casZadaniaMinulyMesiac.get(Calendar.DAY_OF_MONTH));
+                                                if (sumyZaDanyDen != null && casZadaniaMinulyMesiac.get(Calendar.DAY_OF_MONTH) > odDna) {
+                                                    sumyZaDanyDen.add(transferIfNecessery(zaznamVydaj.getSuma(), zvolenaMena, zaznamVydaj.getMena()));
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    Log.i(TAG, "onDataChange: data minuly mesaic init bar chart");
+                    initBarChart();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+
+        /*listenerNaUcty = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -352,11 +631,14 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             }
         };
 
+
+         */
     }
 
     private void initView() {
 
-        DatabaseManager.getDb().child("ucty").addValueEventListener(listenerNaUcty);
+        DatabaseManager.getDb().addValueEventListener(celkovyListener);
+        //DatabaseManager.getDb().child("ucty").addValueEventListener(listenerNaUcty);
     }
 
     private void nastavSumy() {
@@ -379,7 +661,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         Double result = .0;
 
         for (Prijem prijem: zaznamyPrijem) {
-            result += prijem.getSuma();
+            result += transferIfNecessery(prijem.getSuma(), zvolenaMena, prijem.getMena());
         }
 
         return result;
@@ -396,7 +678,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
     public void onPause() {
         super.onPause();
 
-        Calendar aktualnyDatum = Calendar.getInstance();
+        /*Calendar aktualnyDatum = Calendar.getInstance();
         Calendar minulyMesaic = Calendar.getInstance();
         minulyMesaic.add(Calendar.MONTH, -1);
 
@@ -424,10 +706,15 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                     .removeEventListener(listenerNaTrvalePrikazy);
         }
 
+         */
+
+        DatabaseManager.getDb().removeEventListener(celkovyListener);
+
         nacitavanieProgressBar.setVisibility(View.VISIBLE);
         nacitavanieText.setVisibility(View.VISIBLE);
         upozornenie.setVisibility(GONE);
         scrollView.setVisibility(GONE);
+
 
     }
 
@@ -478,12 +765,13 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         BarDataSet newSet = new BarDataSet(barEntriesY, null);
         newSet.setColor(ContextCompat.getColor(getContext(), R.color.blue_800));
         BarData data = new BarData(newSet);
+        data.setValueFormatter(new yAxisFormatter(zvolenaMena));
         data.setBarWidth(0.9f);
         data.setValueTextSize(15);
-        data.setValueFormatter(new yAxisFormatter(hlavnyUcet.getMena()));
         barChart.setData(data);
-
         barChart.getLegend().setEnabled(false);
+
+
 
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(new xAxisFormatter());
@@ -507,6 +795,29 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             this.mena = mena;
         }
 
+        /*
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            Log.i(TAG, "getPointLabel: " + mena.getMena());
+
+            if ((mena == Meny.BTC || mena == Meny.ETH) && value != 0f) {
+                return String.format("%.8f", value);
+            }
+            return String.format("%.2f", value);
+        }
+
+         */
+
+        @Override
+        public String getFormattedValue(float value) {
+
+            if ((mena == Meny.BTC || mena == Meny.ETH) && value != 0f) {
+                return String.format("%.8f", value);
+            }
+            return String.format("%.2f", value);
+        }
+
+        /*
         @Override
         public String getPointLabel(Entry entry) {
             if ((mena == Meny.BTC || mena == Meny.ETH) && entry.getY() != 0f) {
@@ -514,6 +825,8 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             }
             return String.format("%.2f", entry.getY());
         }
+
+         */
     }
 
     private class xAxisFormatter extends ValueFormatter {
@@ -540,6 +853,53 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         }
 
         System.out.println(Arrays.toString(poslednych7Dni));
+
+    }
+
+    private void nastalaChyba(String chyba) {
+
+        AlertDialog.Builder chybaBuilder = new AlertDialog.Builder(getContext());
+
+        chybaBuilder.setTitle("Neočakávaná chyba");
+        chybaBuilder.setMessage("Nastala neočakávaná chyba - zobrazené údaje nemusia byť správne. Pokus o danú akcie prosím opakujte");
+
+        chybaBuilder.setPositiveButton("Ok", null);
+        chybaBuilder.create().show();
+    }
+
+    private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
+
+        if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
+            return sumaVoZvolenejMene;
+        }
+
+        double vyslednaSuma = 0.;
+
+        int counter = 0;
+
+        while (sharedPreferences.getLong("kurzy_update_date") == 0) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+            }
+
+            if (counter > 5) {
+                nastalaChyba("");
+            }
+
+            counter++;
+        }
+
+        try {
+            double sumaAkoUSD = sumaVoZvolenejMene / Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZaznamu.getSkratka().toLowerCase(Locale.ROOT))));
+
+            vyslednaSuma = sumaAkoUSD * Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZvolenehoUctu.getSkratka().toLowerCase(Locale.ROOT))));
+        } catch (Exception e) {
+            Log.i(TAG, "transferIfNecessery: nastala chyba " + e.getMessage() );
+            return 0.;
+        }
+
+        return vyslednaSuma;
 
     }
 }
