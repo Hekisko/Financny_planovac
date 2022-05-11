@@ -6,7 +6,7 @@
 
     <!-- Rychly prehlad -->
     <string name="rychly_prehlad_vydavky_7_dni">Výdavky za posledných 7 dní</string>
-    <string name="rychly_prehlad_celkovy_zostatok">Celkový zostatok na účte</string>
+    <string name="rychly_prehlad_celkovy_zostatok">Celkový zostatok</string>
     <string name="rychly_prehlad_zostatok_dnesny_den">Zostatok na dnešný deň</string>
     <string name="rychly_prehlad_zostatok_tyzden">Zostatok na týždeň</string>
     <string name="rychly_prehlad_zostatok_mesiac">Zostatok do konca mesiaca</string>

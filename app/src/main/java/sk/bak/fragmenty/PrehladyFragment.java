@@ -1,8 +1,11 @@
 package sk.bak.fragmenty;
 
+import static android.view.View.GONE;
+
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -25,12 +29,14 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -39,7 +45,6 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.Utils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,22 +53,28 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import java.util.TreeMap;
 
 import sk.bak.R;
 import sk.bak.managers.DatabaseManager;
+import sk.bak.model.BeznyUcet;
 import sk.bak.model.Prijem;
+import sk.bak.model.TrvalyPrikaz;
 import sk.bak.model.Vydaj;
 import sk.bak.model.abst.Ucet;
 import sk.bak.model.abst.VlozenyZaznam;
+import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
-
+import sk.bak.model.enums.TypyUctov;
+import sk.bak.utils.MySharedPreferences;
 
 
 public class PrehladyFragment extends Fragment {
@@ -90,6 +101,7 @@ public class PrehladyFragment extends Fragment {
 
     private CardView pieChartCardButton;
     private CardView lineChartCardButton;
+    private CardView rychlePrehladyCardButton;
     private CardView[] selectedTypGrafu = {null};
 
     private LinearLayout datumLayout;
@@ -127,6 +139,7 @@ public class PrehladyFragment extends Fragment {
 
     private LineChart lineChart;
 
+    private View rychlePrehlady;
 
     private View.OnClickListener ucetClick;
     private View.OnClickListener grafClick;
@@ -136,13 +149,18 @@ public class PrehladyFragment extends Fragment {
 
     private DatabaseReference databaseReferenceListeningAt;
     private ValueEventListener pouzivanyListner;
-
+    private MySharedPreferences sharedPreferences;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         currentView = inflater.inflate(R.layout.prehlady_fragment, container, false);
-        
+
+        rychlePrehlady = currentView.findViewById(R.id.prehlady_rychly_prehlad);
+        rychlePrehlady.setVisibility(GONE);
+
+        sharedPreferences = new MySharedPreferences(getContext());
+
         zvoleneFiltre = new HashSet<>();
         ziadneData = currentView.findViewById(R.id.prehlady_ziadne_data);
         ziadneData.setVisibility(View.GONE);
@@ -291,6 +309,10 @@ public class PrehladyFragment extends Fragment {
 
             initLineChartWithData();
 
+        } else {
+
+            initRychlePrehlady();
+
         }
 
         Log.i(TAG, "fillGrafy: DONE");
@@ -325,6 +347,8 @@ public class PrehladyFragment extends Fragment {
         ucelIconyLayout.setVisibility(View.GONE);
         pieChart.setVisibility(View.GONE);
         lineChart.setVisibility(View.GONE);
+        rychlePrehlady.setVisibility(GONE);
+        odregistrujRychlePrehlady();
         changeFilterBool(false);
         Log.i(TAG, "skryGrafy: DONE");
     }
@@ -536,6 +560,9 @@ public class PrehladyFragment extends Fragment {
     }
 
     private void initTypGraphSelection() {
+
+        rychlePrehladyCardButton = currentView.findViewById(R.id.prehlady_rychle_prehlady_card);
+        rychlePrehladyCardButton.setOnClickListener(grafClick);
 
         pieChartCardButton = currentView.findViewById(R.id.prehlady_piechart_card);
         pieChartCardButton.setOnClickListener(grafClick);
@@ -1123,5 +1150,553 @@ public class PrehladyFragment extends Fragment {
             databaseReferenceListeningAt = null;
             pouzivanyListner = null;
         }
+
+        odregistrujRychlePrehlady();
     }
+
+
+
+
+
+
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    // Adapter na home rychly prehlad
+
+
+    private void initRychlePrehlady() {
+        initRychlyPrehlad();
+        spustRychlePrehlady();
+        rychlePrehlady.setVisibility(View.VISIBLE);
+    }
+
+
+    private void odregistrujRychlePrehlady() {
+        if (rychlyPrehlad_zvolenyUcetNazov != null && !rychlyPrehlad_zvolenyUcetNazov.equals("")  ) {
+            ukonciRychlePrehlady();
+            rychlyPrehlad_zvolenyUcetNazov = "";
+        }
+        rychlePrehlady.setVisibility(GONE);
+    }
+
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+    /**
+     *
+     * Kod pre rychly prehlad
+     *
+     */
+
+    private BarChart rychlyPrehlad_barChart;
+
+    private int[] rychlyPrehlad_poslednych7Dni = new int[7];
+    private List<String> rychlyPrehlad_dniTyzdnaNaX;
+
+    private ScrollView rychlyPrehlad_scrollView;
+    private TextView rychlyPrehlad_upozornenie;
+    private TextView rychlyPrehlad_nacitavanieText;
+    private ProgressBar rychlyPrehlad_nacitavanieProgressBar;
+    private TextView rychlyPrehlad_celkovyZostatok;
+    private TextView rychlyPrehlad_dnesnyDen;
+    private TextView rychlyPrehlad_tyzden;
+    private TextView rychlyPrehlad_mesiac;
+
+    private List<Ucet> rychlyPrehlad_ucty;
+    private BeznyUcet rychlyPrehlad_aktualnyUcet;
+    private String rychlyPrehlad_zvolenyUcetNazov;
+
+    Map<Integer, List<Double>> rychlyPrehlad_sumyMinuteZaPoslednych7Dni;
+
+
+    ValueEventListener rychlyPrehlad_listenerNaUcty;
+    ValueEventListener rychlyPrehlad_listenerNaTrvalePrikazy;
+    ValueEventListener rychlyPrehlad_listenerNaZaznamyAktualnyMesiac;
+    ValueEventListener rychlyPrehlad_listenerNaZaznamyMinulyMesiac;
+
+    List<Prijem> rychlyPrehlad_zaznamyPrijem;
+    List<Vydaj> rychlyPrehlad_zaznamyVydaj;
+
+
+    public void initRychlyPrehlad() {
+        // Inflate the layout for this fragment
+
+        rychlyPrehlad_zvolenyUcetNazov = ((TextView)selectedUcetPrehladu[0].getChildAt(0)).getText().toString();
+
+        rychlyPrehlad_scrollView = currentView.findViewById(R.id.home_fragment_rychly_prehlad_scroll_view);
+        rychlyPrehlad_upozornenie = currentView.findViewById(R.id.home_fragment_rychly_prehlad_upozornenie);
+        rychlyPrehlad_nacitavanieText = currentView.findViewById(R.id.home_fragment_rychly_prehlad_nacitavanie);
+        rychlyPrehlad_nacitavanieProgressBar = currentView.findViewById(R.id.home_fragment_rychly_prehlad_progressBar);
+        rychlyPrehlad_celkovyZostatok = currentView.findViewById(R.id.home_fragment_rychly_prehlad_celkovy_suma);
+        rychlyPrehlad_dnesnyDen = currentView.findViewById(R.id.home_fragment_rychly_prehlad_dnesny_den);
+        rychlyPrehlad_tyzden = currentView.findViewById(R.id.home_fragment_rychly_prehlad_tyzden);
+        rychlyPrehlad_mesiac = currentView.findViewById(R.id.home_fragment_rychly_prehlad_koniec_mesiaca);
+
+        Log.i(TAG, "onCreateView: nastajuvem layout na gone");
+        rychlyPrehlad_nacitavanieText.setVisibility(View.VISIBLE);
+        rychlyPrehlad_nacitavanieProgressBar.setVisibility(View.VISIBLE);
+        rychlyPrehlad_scrollView.setVisibility(GONE);
+        rychlyPrehlad_upozornenie.setVisibility(GONE);
+
+        initListners();
+    }
+
+    private void initListners() {
+
+        rychlyPrehlad_listenerNaUcty = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Log.i(TAG, "onDataChange: ucty nove data");
+                rychlyPrehlad_ucty = new ArrayList<>();
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+
+                    Ucet ucet = dataSnapshot1.getValue(Ucet.class);
+                    if (ucet.getNazov().equals(rychlyPrehlad_zvolenyUcetNazov)) {
+                        if (ucet.getTypUctu() != TypyUctov.BEZNY) {
+                            rychlyPrehlad_aktualnyUcet = null;
+                            rychlyPrehlad_nacitavanieText.setVisibility(GONE);
+                            rychlyPrehlad_nacitavanieProgressBar.setVisibility(GONE);
+                            rychlyPrehlad_scrollView.setVisibility(GONE);
+                            rychlyPrehlad_upozornenie.setText("Pre zobrazenie rýchleho prehľadu, vybraný účet musí byť bežný");
+                            rychlyPrehlad_upozornenie.setVisibility(View.VISIBLE);
+                            return;
+                        }
+                        rychlyPrehlad_aktualnyUcet = dataSnapshot1.getValue(BeznyUcet.class);
+                        break;
+                    }
+                }
+
+                nastavSumy();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        rychlyPrehlad_listenerNaZaznamyAktualnyMesiac = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rychlyPrehlad_zaznamyPrijem = new ArrayList<>();
+                rychlyPrehlad_zaznamyVydaj = new ArrayList<>();
+
+                Log.i(TAG, "onDataChange: mam nove data zaznamy tento mesiac");
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+
+                    VlozenyZaznam zaznam = dataSnapshot1.getValue(VlozenyZaznam.class);
+
+                    if (zaznam.getTypZaznamu() == TypZaznamu.PRIJEM) {
+                        rychlyPrehlad_zaznamyPrijem.add(dataSnapshot1.getValue(Prijem.class));
+                    } else {
+                        rychlyPrehlad_zaznamyVydaj.add(dataSnapshot1.getValue(Vydaj.class));
+                    }
+                }
+
+
+                Log.i(TAG, "onDataChange: inicializujem listner na trvale prikazy");
+                DatabaseManager
+                        .getDb()
+                        .child("trvalePrikazy")
+                        .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                        .addValueEventListener(rychlyPrehlad_listenerNaTrvalePrikazy);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+
+        rychlyPrehlad_listenerNaTrvalePrikazy =  new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Log.i(TAG, "onDataChange: noda data trvale prikazy");
+
+                Calendar aktualnyDatum = Calendar.getInstance();
+
+                for (DataSnapshot trvalyPrikazSnapshot: dataSnapshot.getChildren()) {
+
+                    TrvalyPrikaz trvalyPrikazAktualny = trvalyPrikazSnapshot.getValue(TrvalyPrikaz.class);
+
+                    if (!trvalyPrikazAktualny.isSporiaci()) {
+                        if (trvalyPrikazAktualny.getZaznam().getDenSplatnosti() > aktualnyDatum.get(Calendar.DAY_OF_MONTH)) {
+                            if (trvalyPrikazAktualny.getZaznam().getTypZaznamu() == TypZaznamu.PRIJEM) {
+                                Prijem novyPrijem = new Prijem();
+                                novyPrijem.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                novyPrijem.setMena(trvalyPrikazAktualny.getZaznam().getMena());
+
+                                rychlyPrehlad_zaznamyPrijem.add(novyPrijem);
+                            } else {
+                                Vydaj novyVydaj =  new Vydaj();
+                                novyVydaj.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                novyVydaj.setMena(trvalyPrikazAktualny.getZaznam().getMena());
+
+                                rychlyPrehlad_zaznamyVydaj.add(novyVydaj);
+                            }
+                        }
+                    }
+
+                }
+
+                Log.i(TAG, "onDataChange: zacinam pocitat sumy");
+                Double mesacnaSumaPrijem = spocitajPrijem(rychlyPrehlad_zaznamyPrijem);
+
+                Double mesacnaSumaNaMinanie = mesacnaSumaPrijem - rychlyPrehlad_aktualnyUcet.getChcenaMesacneUsetrenaSuma();
+
+                Double sumaNaMinutieNaJedenDen = mesacnaSumaNaMinanie / (double) aktualnyDatum.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                Double dnesMinutaSuma = .0;
+                Double sumyMinutaZaCelyMesaic = .0;
+
+                rychlyPrehlad_sumyMinuteZaPoslednych7Dni = new TreeMap<>();
+                Calendar kalendarNaPosunDatumu = Calendar.getInstance();
+
+                for (int i = 7; i > 0; i--) {
+                    rychlyPrehlad_sumyMinuteZaPoslednych7Dni.put(kalendarNaPosunDatumu.get(Calendar.DAY_OF_MONTH), new ArrayList<>());
+                    kalendarNaPosunDatumu.add(Calendar.DAY_OF_MONTH, -1);
+                }
+
+                // posledny den kedy sa ma brat zaznam
+                kalendarNaPosunDatumu.add(Calendar.DAY_OF_MONTH, 1);
+
+                Calendar casZadania = Calendar.getInstance();
+                for (Vydaj vydaj: rychlyPrehlad_zaznamyVydaj) {
+
+                    sumyMinutaZaCelyMesaic += transferIfNecessery(vydaj.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), vydaj.getMena());
+
+                    casZadania.setTime(vydaj.getCasZadania());
+
+                    if (casZadania.get(Calendar.DAY_OF_MONTH) == aktualnyDatum.get(Calendar.DAY_OF_MONTH)) {
+                        dnesMinutaSuma += transferIfNecessery(vydaj.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), vydaj.getMena());
+                    }
+
+                    List<Double> sumyZaDanyDen = rychlyPrehlad_sumyMinuteZaPoslednych7Dni.get(casZadania.get(Calendar.DAY_OF_MONTH));
+                    if (sumyZaDanyDen != null) {
+                        sumyZaDanyDen.add(vydaj.getSuma());
+                    }
+
+                }
+
+                int pocetOstavajucichDniVMesiaci = aktualnyDatum.getActualMaximum(Calendar.DAY_OF_MONTH) - aktualnyDatum.get(Calendar.DAY_OF_MONTH) + 1;
+                Double ostavajucaSumaNaMesiac = mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic;
+
+
+
+                if (rychlyPrehlad_aktualnyUcet.getMena() == Meny.BTC || rychlyPrehlad_aktualnyUcet.getMena() == Meny.ETH) {
+                    rychlyPrehlad_celkovyZostatok.setText(String.format("%.8f %s", rychlyPrehlad_aktualnyUcet.getAktualnyZostatok(), rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                    rychlyPrehlad_dnesnyDen.setText(String.format("%.8f %s", ostavajucaSumaNaMesiac / pocetOstavajucichDniVMesiaci, rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                    rychlyPrehlad_mesiac.setText(String.format("%.8f %s", mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic, rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                } else {
+                    rychlyPrehlad_celkovyZostatok.setText(String.format("%.02f %s", rychlyPrehlad_aktualnyUcet.getAktualnyZostatok(), rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                    rychlyPrehlad_dnesnyDen.setText(String.format("%.02f %s", ostavajucaSumaNaMesiac / pocetOstavajucichDniVMesiaci, rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                    rychlyPrehlad_mesiac.setText(String.format("%.02f %s", mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic, rychlyPrehlad_aktualnyUcet.getMena().getZnak()));
+                }
+
+
+                if (aktualnyDatum.get(Calendar.MONTH) == kalendarNaPosunDatumu.get(Calendar.MONTH)) {
+
+                    Log.i(TAG, "onDataChange: trvaleprikazy init barchart");
+                    initBarChart();
+
+                } else {
+
+                    Log.i(TAG, "onDataChange: potrebujem data z minuleho mesiaca, nastavujem listner na minuly mesiac");
+                    DatabaseManager
+                            .getDb()
+                            .child("zaznamy")
+                            .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                            .child(kalendarNaPosunDatumu.get(Calendar.YEAR) + "_" + (kalendarNaPosunDatumu.get(Calendar.MONTH) + 1))
+                            .addValueEventListener(rychlyPrehlad_listenerNaZaznamyMinulyMesiac);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        rychlyPrehlad_listenerNaZaznamyMinulyMesiac = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Log.i(TAG, "onDataChange: nove dat minuly mesaic");
+                Calendar aktualnyDatum = Calendar.getInstance();
+                Calendar minulyMesiac = Calendar.getInstance();
+                minulyMesiac.add(Calendar.MONTH, -1);
+
+                int pocetDniZMinulehoMesiaca = 7 - aktualnyDatum.get(Calendar.DAY_OF_MONTH);
+                int odDna = minulyMesiac.getActualMaximum(Calendar.DAY_OF_MONTH) - pocetDniZMinulehoMesiaca;
+
+                for (DataSnapshot dataSnapshot1: dataSnapshot.getChildren()) {
+
+                    VlozenyZaznam zaznam = dataSnapshot1.getValue(VlozenyZaznam.class);
+
+                    if (zaznam.getTypZaznamu() == TypZaznamu.VYDAJ) {
+                        Vydaj zaznamVydaj = dataSnapshot1.getValue(Vydaj.class);
+                        Calendar casZadania = Calendar.getInstance();
+                        casZadania.setTime(zaznamVydaj.getCasZadania());
+
+                        List<Double> sumyZaDanyDen = rychlyPrehlad_sumyMinuteZaPoslednych7Dni.get(casZadania.get(Calendar.DAY_OF_MONTH));
+                        if (sumyZaDanyDen != null && casZadania.get(Calendar.DAY_OF_MONTH) > odDna) {
+                            sumyZaDanyDen.add(zaznamVydaj.getSuma());
+                        }
+
+                    }
+                }
+
+                Log.i(TAG, "onDataChange: data minuly mesaic init bar chart");
+                initBarChart();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+    }
+
+    private void initView() {
+
+        DatabaseManager.getDb().child("ucty").addValueEventListener(rychlyPrehlad_listenerNaUcty);
+    }
+
+    private void nastavSumy() {
+
+        Calendar aktualnyDatum = Calendar.getInstance();
+
+        DatabaseManager
+                .getDb()
+                .child("zaznamy")
+                .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                .child(aktualnyDatum.get(Calendar.YEAR) + "_" + (aktualnyDatum.get(Calendar.MONTH) + 1))
+                .addValueEventListener(rychlyPrehlad_listenerNaZaznamyAktualnyMesiac);
+
+
+
+    }
+
+    private Double spocitajPrijem(List<Prijem> zaznamyPrijem) {
+
+        Double result = .0;
+
+
+        for (Prijem prijem: zaznamyPrijem) {
+            Log.i(TAG, "spocitajPrijem: " + rychlyPrehlad_aktualnyUcet.getMena() + prijem.getMena());
+            result += transferIfNecessery(prijem.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), prijem.getMena());
+        }
+
+        return result;
+    }
+
+    public void spustRychlePrehlady() {
+        initView();
+    }
+
+    public void ukonciRychlePrehlady() {
+
+        Calendar aktualnyDatum = Calendar.getInstance();
+        Calendar minulyMesaic = Calendar.getInstance();
+        minulyMesaic.add(Calendar.MONTH, -1);
+
+        DatabaseManager.getDb().child("ucty").removeEventListener(rychlyPrehlad_listenerNaUcty);
+        if (rychlyPrehlad_aktualnyUcet != null) {
+            DatabaseManager
+                    .getDb()
+                    .child("zaznamy")
+                    .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                    .child(aktualnyDatum.get(Calendar.YEAR) + "_" + (aktualnyDatum.get(Calendar.MONTH) + 1))
+                    .removeEventListener(rychlyPrehlad_listenerNaZaznamyAktualnyMesiac);
+
+
+            DatabaseManager
+                    .getDb()
+                    .child("zaznamy")
+                    .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                    .child(minulyMesaic.get(Calendar.YEAR) + "_" + (minulyMesaic.get(Calendar.MONTH) + 1))
+                    .removeEventListener(rychlyPrehlad_listenerNaZaznamyMinulyMesiac);
+
+            DatabaseManager
+                    .getDb()
+                    .child("trvalePrikazy")
+                    .child(rychlyPrehlad_aktualnyUcet.getNazov())
+                    .removeEventListener(rychlyPrehlad_listenerNaTrvalePrikazy);
+        }
+
+        rychlyPrehlad_nacitavanieProgressBar.setVisibility(View.VISIBLE);
+        rychlyPrehlad_nacitavanieText.setVisibility(View.VISIBLE);
+        rychlyPrehlad_upozornenie.setVisibility(GONE);
+        rychlyPrehlad_scrollView.setVisibility(GONE);
+
+    }
+
+    private void initBarChart() {
+
+        Log.i(TAG, "initBarChart: zacinam nastavovat bar chart");
+
+        initPoslednych7Dni();
+
+        rychlyPrehlad_barChart = currentView.findViewById(R.id.home_fragment_rychly_prehlad_bar_chart);
+
+        rychlyPrehlad_barChart.setDrawBarShadow(false);
+        rychlyPrehlad_barChart.setDrawValueAboveBar(true);
+        rychlyPrehlad_barChart.setDrawGridBackground(false);
+        rychlyPrehlad_barChart.setPinchZoom(false);
+        rychlyPrehlad_barChart.setMaxVisibleValueCount(50);
+        //barChart.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bar_chart_background));
+        rychlyPrehlad_barChart.getAxisLeft().setDrawGridLines(false);
+        rychlyPrehlad_barChart.getXAxis().setDrawGridLines(false);
+        rychlyPrehlad_barChart.getAxisRight().setDrawGridLines(false);
+        rychlyPrehlad_barChart.getAxisRight().setEnabled(false);
+        rychlyPrehlad_barChart.getAxisLeft().setEnabled(false);
+        rychlyPrehlad_barChart.getDescription().setEnabled(false);
+        rychlyPrehlad_barChart.animateXY(1000, 1000);
+        rychlyPrehlad_barChart.setTouchEnabled(false);
+
+        ArrayList<BarEntry> barEntriesY = new ArrayList<>();
+
+        ArrayList<String> dniTyzdna = new ArrayList<>(Arrays.asList("Po", "Ut", "St", "Št", "Pi", "So", "Ne"));
+        ArrayList<Double> minuteSumyZa7Dni = new ArrayList<>();
+        Calendar kalendarPreGraf = Calendar.getInstance();
+
+        for (int i = 0; i < 7; i++) {
+
+            List<Double> vydajkyZaZvolenyDenList = rychlyPrehlad_sumyMinuteZaPoslednych7Dni.get(kalendarPreGraf.get(Calendar.DAY_OF_MONTH));
+            minuteSumyZa7Dni.add(vydajkyZaZvolenyDenList.stream().reduce(0., Double::sum));
+            kalendarPreGraf.add(Calendar.DAY_OF_MONTH, -1);
+        }
+
+        Collections.reverse(minuteSumyZa7Dni);
+
+        rychlyPrehlad_dniTyzdnaNaX = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            barEntriesY.add(new BarEntry(i, minuteSumyZa7Dni.get(i).floatValue()));
+            rychlyPrehlad_dniTyzdnaNaX.add(dniTyzdna.get(rychlyPrehlad_poslednych7Dni[i]));
+        }
+
+        BarDataSet newSet = new BarDataSet(barEntriesY, null);
+        newSet.setColor(ContextCompat.getColor(getContext(), R.color.blue_800));
+        BarData data = new BarData(newSet);
+        data.setBarWidth(0.9f);
+        data.setValueTextSize(15);
+        data.setValueFormatter(new yAxisFormatterRychlyPrehlad(rychlyPrehlad_aktualnyUcet.getMena()));
+        rychlyPrehlad_barChart.setData(data);
+
+        rychlyPrehlad_barChart.getLegend().setEnabled(false);
+
+        XAxis xAxis = rychlyPrehlad_barChart.getXAxis();
+        xAxis.setValueFormatter(new xAxisFormatterRychlyPrehlad());
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        xAxis.setTextSize(18);
+        xAxis.setDrawAxisLine(false);
+
+        rychlyPrehlad_nacitavanieProgressBar.setVisibility(GONE);
+        rychlyPrehlad_nacitavanieText.setVisibility(GONE);
+        rychlyPrehlad_upozornenie.setVisibility(GONE);
+        rychlyPrehlad_scrollView.setVisibility(View.VISIBLE);
+        Log.i(TAG, "initBarChart: graf nastaveny, menim viditelnost ");
+
+    }
+
+    private class yAxisFormatterRychlyPrehlad extends ValueFormatter {
+
+        private Meny mena;
+
+        public yAxisFormatterRychlyPrehlad(Meny mena) {
+            this.mena = mena;
+        }
+
+        @Override
+        public String getPointLabel(Entry entry) {
+            if ((mena == Meny.BTC || mena == Meny.ETH) && entry.getY() != 0f) {
+                return String.format("%.8f", entry.getY());
+            }
+            return String.format("%.2f", entry.getY());
+        }
+    }
+
+    private class xAxisFormatterRychlyPrehlad extends ValueFormatter {
+
+        @Override
+        public String getAxisLabel(float value, AxisBase axis) {
+            return rychlyPrehlad_dniTyzdnaNaX.get((int)value);
+        }
+    }
+
+    private void initPoslednych7Dni() {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+
+        int aktualnyDenPredTyznom;
+
+        for (int i = 0; i <= 6; i++) {
+
+            aktualnyDenPredTyznom = calendar.get(Calendar.DAY_OF_WEEK);
+            rychlyPrehlad_poslednych7Dni[i] = aktualnyDenPredTyznom - 1;
+
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        System.out.println(Arrays.toString(rychlyPrehlad_poslednych7Dni));
+
+    }
+
+    private void nastalaChyba(String chyba) {
+
+        AlertDialog.Builder chybaBuilder = new AlertDialog.Builder(getContext());
+
+        chybaBuilder.setTitle("Neočakávaná chyba");
+        chybaBuilder.setMessage("Nastala neočakávaná chyba - zobrazené údaje nemusia byť správne. Pokus o danú akcie prosím opakujte");
+
+        chybaBuilder.setPositiveButton("Ok", null);
+        chybaBuilder.create().show();
+    }
+
+    private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
+
+        if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
+            return sumaVoZvolenejMene;
+        }
+
+        double vyslednaSuma = 0.;
+
+        int counter = 0;
+
+        while (sharedPreferences.getLong("kurzy_update_date") == 0) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+            }
+
+            if (counter > 5) {
+                nastalaChyba("");
+            }
+
+            counter++;
+        }
+
+        try {
+            double sumaAkoUSD = sumaVoZvolenejMene / Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZaznamu.getSkratka().toLowerCase(Locale.ROOT))));
+
+            vyslednaSuma = sumaAkoUSD * Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZvolenehoUctu.getSkratka().toLowerCase(Locale.ROOT))));
+        } catch (Exception e) {
+            Log.i(TAG, "transferIfNecessery: nastala chyba " + e.getMessage() );
+            return 0.;
+        }
+
+        return vyslednaSuma;
+
+    }
+
 }
