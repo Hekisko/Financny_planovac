@@ -541,9 +541,11 @@ public class DatabaseManager {
         int nacitavam = 0;
 
         while (sharedPreferences.getLong("kurzy_update_date") == 0) {
-            if (nacitavam == 0) {
-                Utils.nacitajKurzy(sharedPreferences, context);
-                nacitavam = 1;
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception exception) {
+
             }
 
         }

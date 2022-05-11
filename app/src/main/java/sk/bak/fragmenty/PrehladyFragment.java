@@ -2,6 +2,8 @@ package sk.bak.fragmenty;
 
 import static android.view.View.GONE;
 
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -55,6 +57,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -71,6 +74,7 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.enums.TypyUctov;
+import sk.bak.utils.MySharedPreferences;
 
 
 public class PrehladyFragment extends Fragment {
@@ -145,7 +149,7 @@ public class PrehladyFragment extends Fragment {
 
     private DatabaseReference databaseReferenceListeningAt;
     private ValueEventListener pouzivanyListner;
-
+    private MySharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -154,6 +158,8 @@ public class PrehladyFragment extends Fragment {
 
         rychlePrehlady = currentView.findViewById(R.id.prehlady_rychly_prehlad);
         rychlePrehlady.setVisibility(GONE);
+
+        sharedPreferences = new MySharedPreferences(getContext());
 
         zvoleneFiltre = new HashSet<>();
         ziadneData = currentView.findViewById(R.id.prehlady_ziadne_data);
@@ -1325,11 +1331,13 @@ public class PrehladyFragment extends Fragment {
                             if (trvalyPrikazAktualny.getZaznam().getTypZaznamu() == TypZaznamu.PRIJEM) {
                                 Prijem novyPrijem = new Prijem();
                                 novyPrijem.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                novyPrijem.setMena(trvalyPrikazAktualny.getZaznam().getMena());
 
                                 rychlyPrehlad_zaznamyPrijem.add(novyPrijem);
                             } else {
                                 Vydaj novyVydaj =  new Vydaj();
                                 novyVydaj.setSuma(trvalyPrikazAktualny.getZaznam().getSuma());
+                                novyVydaj.setMena(trvalyPrikazAktualny.getZaznam().getMena());
 
                                 rychlyPrehlad_zaznamyVydaj.add(novyVydaj);
                             }
@@ -1362,12 +1370,12 @@ public class PrehladyFragment extends Fragment {
                 Calendar casZadania = Calendar.getInstance();
                 for (Vydaj vydaj: rychlyPrehlad_zaznamyVydaj) {
 
-                    sumyMinutaZaCelyMesaic += vydaj.getSuma();
+                    sumyMinutaZaCelyMesaic += transferIfNecessery(vydaj.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), vydaj.getMena());
 
                     casZadania.setTime(vydaj.getCasZadania());
 
                     if (casZadania.get(Calendar.DAY_OF_MONTH) == aktualnyDatum.get(Calendar.DAY_OF_MONTH)) {
-                        dnesMinutaSuma += vydaj.getSuma();
+                        dnesMinutaSuma += transferIfNecessery(vydaj.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), vydaj.getMena());
                     }
 
                     List<Double> sumyZaDanyDen = rychlyPrehlad_sumyMinuteZaPoslednych7Dni.get(casZadania.get(Calendar.DAY_OF_MONTH));
@@ -1482,8 +1490,10 @@ public class PrehladyFragment extends Fragment {
 
         Double result = .0;
 
+
         for (Prijem prijem: zaznamyPrijem) {
-            result += prijem.getSuma();
+            Log.i(TAG, "spocitajPrijem: " + rychlyPrehlad_aktualnyUcet.getMena() + prijem.getMena());
+            result += transferIfNecessery(prijem.getSuma(), rychlyPrehlad_aktualnyUcet.getMena(), prijem.getMena());
         }
 
         return result;
@@ -1642,5 +1652,51 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    private void nastalaChyba(String chyba) {
+
+        AlertDialog.Builder chybaBuilder = new AlertDialog.Builder(getContext());
+
+        chybaBuilder.setTitle("Neočakávaná chyba");
+        chybaBuilder.setMessage("Nastala neočakávaná chyba - zobrazené údaje nemusia byť správne. Pokus o danú akcie prosím opakujte");
+
+        chybaBuilder.setPositiveButton("Ok", null);
+        chybaBuilder.create().show();
+    }
+
+    private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
+
+        if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
+            return sumaVoZvolenejMene;
+        }
+
+        double vyslednaSuma = 0.;
+
+        int counter = 0;
+
+        while (sharedPreferences.getLong("kurzy_update_date") == 0) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+            }
+
+            if (counter > 5) {
+                nastalaChyba("");
+            }
+
+            counter++;
+        }
+
+        try {
+            double sumaAkoUSD = sumaVoZvolenejMene / Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZaznamu.getSkratka().toLowerCase(Locale.ROOT))));
+
+            vyslednaSuma = sumaAkoUSD * Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZvolenehoUctu.getSkratka().toLowerCase(Locale.ROOT))));
+        } catch (Exception e) {
+            Log.i(TAG, "transferIfNecessery: nastala chyba " + e.getMessage() );
+            return 0.;
+        }
+
+        return vyslednaSuma;
+
+    }
 
 }
