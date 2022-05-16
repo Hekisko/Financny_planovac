@@ -7,6 +7,12 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 
+
+/**
+ *
+ * Trieda záznamu typu trvalý príkaz
+ *
+ */
 public class TrvalyPrikaz {
 
     private boolean isSporiaci;

@@ -1,5 +1,11 @@
 package sk.bak.model.enums;
 
+
+/**
+ *
+ * Enum pre meny
+ *
+ */
 public enum Meny {
     EUR("Euro", "EUR", 0, "€"),
     USD("Dolár", "USD", 1, "$"),

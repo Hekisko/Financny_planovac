@@ -2,6 +2,12 @@ package sk.bak.model;
 
 import sk.bak.model.abst.Ucet;
 
+
+/**
+ *
+ * Trieda sporiaceho účtu
+ *
+ */
 public class SporiaciUcet extends Ucet {
 
     private Double percentoZuctovania;

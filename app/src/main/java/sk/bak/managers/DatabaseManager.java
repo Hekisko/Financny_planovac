@@ -1,17 +1,12 @@
 package sk.bak.managers;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.drawable.IconCompat;
+
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,24 +17,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.security.SecurityPermission;
+
 import java.text.SimpleDateFormat;
-import java.time.Month;
-import java.time.Year;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
-import sk.bak.R;
-import sk.bak.fragmenty.UctyFragment;
 import sk.bak.model.BeznyUcet;
 import sk.bak.model.CryptoUcet;
 import sk.bak.model.Prijem;
@@ -51,33 +37,45 @@ import sk.bak.model.abst.VlozenyZaznam;
 import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.enums.TypyUctov;
-import sk.bak.utils.Constants;
 import sk.bak.utils.MySharedPreferences;
-import sk.bak.utils.Utils;
 
+/**
+ *
+ * Trieda určená na pŕacu s datbázou. Obsahuje základné metódy. Niektoré zložitejšie čítania sú definované aj priamo v daných triedach.
+ *
+ */
 public class DatabaseManager {
-
-    private static boolean initDone;
-
-
-    private static FirebaseUser user;
-    private static DatabaseReference db;
-
-
-    private static List<Ucet> ucty = new ArrayList<>();
-    private static boolean suUctyNacitane = false;
-    private static List<VlozenyZaznam> zaznamy = new ArrayList<>();
-
-    private static ValueEventListener zmenyZaznamovListener;
-    private static ValueEventListener uctyListener;
-
-    private static MySharedPreferences sharedPreferences;
-    private static Context context;
-
-    private static FirebaseDatabase firebaseDatabase;
 
     private static final String TAG = "DatabaseManager";
 
+    //Premenne databázy
+    private static FirebaseUser user;
+    private static DatabaseReference db;
+    private static FirebaseDatabase firebaseDatabase;
+
+    //Premenne na dáta
+    private static List<Ucet> ucty = new ArrayList<>();
+    private static List<VlozenyZaznam> zaznamy = new ArrayList<>();
+
+
+    //Premenne na listenery
+    private static ValueEventListener zmenyZaznamovListener;
+    private static ValueEventListener uctyListener;
+
+    // Pomocné premenne
+    private static boolean initDone;
+    private static boolean suUctyNacitane = false;
+    private static MySharedPreferences sharedPreferences;
+    private static Context context;
+
+
+    /**
+     *
+     * Inicializácia databázy. Prebieha vždy po prihlásení sa do Google účtu
+     *
+     * @param firebaseUser
+     * @param contextI
+     */
     public static void initDbManager(FirebaseUser firebaseUser, Context contextI) {
         user = firebaseUser;
 
@@ -94,6 +92,7 @@ public class DatabaseManager {
         db = firebaseDatabase.getReference("users").child(user.getUid());
         db.keepSynced(true);
 
+        //nech sa hned naplni premenna pre účty
         uctyListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -139,15 +138,42 @@ public class DatabaseManager {
         zaplatTrvalePrikazy();
     }
 
+    /**
+     *
+     * Metóda volaná po odhlásení. Vyčistuje vytvorené trvalé listenery
+     *
+     */
+    public static void clear() {
+        db.child("ucty").removeEventListener(uctyListener);
 
+    }
+
+    /**
+     *
+     * Vracia referenciu na db pre vytvaranie potrebnej functionality
+     *
+     * @return
+     */
     public static DatabaseReference getDb() {
         return db;
     }
 
+    /**
+     *
+     * Vracia prihláseného používateľa
+     *
+     * @return
+     */
     public static FirebaseUser getUser() {
         return user;
     }
 
+    /**
+     *
+     * Ukladá účet do db
+     *
+     * @param ucet
+     */
     public static void saveUcet(Ucet ucet) {
         Log.i(TAG, "saveUcet: ukladam ucet START");
 
@@ -156,6 +182,14 @@ public class DatabaseManager {
         Log.i(TAG, "saveUcet: ukladam ucet DONE");
     }
 
+
+    /**
+     *
+     * Ukladá záznam do db
+     *
+     * @param ucetNazov
+     * @param zaznam
+     */
     public static void saveZaznam(String ucetNazov, VlozenyZaznam zaznam) {
 
         Log.i(TAG, "saveZaznam: ukladam zaznam START");
@@ -174,10 +208,25 @@ public class DatabaseManager {
         Log.i(TAG, "saveZaznam: ukladam zaznam DONE");
     }
 
+    /**
+     *
+     * Vracia účty z db
+     *
+     * @return
+     */
     public static List<Ucet> getUcty() {
         return ucty;
     }
 
+
+    /**
+     *
+     * Pridava sumu na ucet podla zadaneho nazvu
+     *
+     * @param nazovUctu
+     * @param suma
+     * @return
+     */
     public static boolean addSumaToUcet(String nazovUctu, Double suma) {
 
         Log.i(TAG, "addSumaToUcet: START");
@@ -222,10 +271,24 @@ public class DatabaseManager {
     }
 
 
+    /**
+     *
+     * Vracia všetky záznamy
+     *
+     * @return
+     */
     public static List<VlozenyZaznam> getZaznamy() {
         return zaznamy;
     }
 
+
+    /**
+     *
+     * Maže trvalý príkaz
+     *
+     * @param nazovUctu
+     * @param idZaznamu
+     */
     public static void deleteTrvalyPrikaz(String nazovUctu, String idZaznamu) {
 
         Log.i(TAG, "deleteTrvalyPrikaz: START");
@@ -233,6 +296,17 @@ public class DatabaseManager {
         Log.i(TAG, "deleteTrvalyPrikaz: DONE");
     }
 
+
+    /**
+     *
+     * Maže obyčajný záznam
+     *
+     * @param deleteAt
+     * @param id
+     * @param suma
+     * @param typZaznamu
+     * @param nazovUctu
+     */
     public static void deleteZaznam(DatabaseReference deleteAt, String id, Double suma, TypZaznamu typZaznamu, String nazovUctu) {
 
         Log.i(TAG, "deleteZaznam: START");
@@ -251,6 +325,13 @@ public class DatabaseManager {
 
     }
 
+
+    /**
+     *
+     * Maže účet a jemu patriace veci
+     *
+     * @param nazov
+     */
     public static void deleteUcet(String nazov) {
 
         Log.i(TAG, "deleteUcet: START");
@@ -260,6 +341,14 @@ public class DatabaseManager {
         Log.i(TAG, "deleteUcet: DONE");
     }
 
+
+    /**
+     *
+     * Uklada trvaly prikaz
+     *
+     * @param nazovUctu
+     * @param zaznam
+     */
     public static void saveTrvalyPrikaz(String nazovUctu, VlozenyZaznam zaznam) {
         Log.i(TAG, "saveTrvalyPrikaz: START");
         String id = db.child("trvalePrikazy").child(nazovUctu).push().getKey();
@@ -278,6 +367,15 @@ public class DatabaseManager {
         Log.i(TAG, "saveTrvalyPrikaz: DONE");
     }
 
+
+    /**
+     *
+     * Uklada trvaly prikaz so zadaným dátumom poslednej zmeny
+     *
+     * @param nazovUctu
+     * @param zaznam
+     * @param datumZmeny
+     */
     public static void saveTrvalyPrikaz(String nazovUctu, VlozenyZaznam zaznam, Date datumZmeny) {
         Log.i(TAG, "saveTrvalyPrikaz: START");
         String id = db.child("trvalePrikazy").child(nazovUctu).push().getKey();
@@ -296,6 +394,15 @@ public class DatabaseManager {
         Log.i(TAG, "saveTrvalyPrikaz: DONE");
     }
 
+
+    /**
+     *
+     * Uklada trvaly zaznam pre sporenie, percento zuctovania
+     *
+     * @param nazovUctu
+     * @param zaznam
+     * @param percentoZuctovania
+     */
     public static void saveTrvalyPrikazSporiaci(String nazovUctu, VlozenyZaznam zaznam, Double percentoZuctovania) {
 
         Log.i(TAG, "saveTrvalyPrikazSporiaci: START");
@@ -317,6 +424,16 @@ public class DatabaseManager {
         Log.i(TAG, "saveTrvalyPrikazSporiaci: DONE");
     }
 
+
+    /**
+     *
+     * Uklada trvaly zaznam pre sporenie, percento zuctovania spolu s datumom poslednej kontroly
+     *
+     * @param nazovUctu
+     * @param zaznam
+     * @param percentoZuctovania
+     * @param poslednaKontrola
+     */
     public static void saveTrvalyPrikazSporiaci(String nazovUctu, VlozenyZaznam zaznam, Double percentoZuctovania, Date poslednaKontrola) {
 
         Log.i(TAG, "saveTrvalyPrikazSporiaci: START");
@@ -337,7 +454,13 @@ public class DatabaseManager {
         db.child("trvalePrikazy").child(nazovUctu).child(id).setValue(trvalyPrikaz);
         Log.i(TAG, "saveTrvalyPrikazSporiaci: DONE");
     }
-    
+
+
+    /**
+     *
+     * Zaplatí vśetky trvalé príkazy
+     *
+     */
     public static void zaplatTrvalePrikazy() {
         Log.i(TAG, "zaplatTrvalePrikazy: START");
 
@@ -424,6 +547,13 @@ public class DatabaseManager {
         
     }
 
+    /**
+     *
+     * Pomocna metóda pre zaplatTrvalePrikazy(). Skontroluje posledny datum kontroly a na zaklade toho bud urobi zaznam alebo nie
+     *
+     * @param aktualnyUcet
+     * @param zaznam
+     */
     private static void uskutocniTranzakciu(Ucet aktualnyUcet, TrvalyPrikaz zaznam) {
 
         Calendar poslednaTranzakcia = Calendar.getInstance();
@@ -486,6 +616,14 @@ public class DatabaseManager {
 
     }
 
+    /**
+     *
+     * Pomocna metoda pre zaplatTrvalePrikazy(). Kopíruje a ukladana zaznam podla trvalého prikazu
+     *
+     * @param aktualnyUcet
+     * @param zaznam
+     * @param datumVykonaniaPrikazu
+     */
     private static void copyAndSave(Ucet aktualnyUcet, TrvalyPrikaz zaznam, Calendar datumVykonaniaPrikazu) {
 
 
@@ -530,6 +668,16 @@ public class DatabaseManager {
 
     }
 
+
+    /**
+     *
+     * Pomocná metóda na prevod Sumy na inú menu
+     *
+     * @param sumaVoZvolenejMene
+     * @param menaZvolenehoUctu
+     * @param menaZaznamu
+     * @return
+     */
     private static double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
 
         if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
@@ -563,11 +711,12 @@ public class DatabaseManager {
 
     }
 
-    public static void clear() {
-        db.child("ucty").removeEventListener(uctyListener);
 
-    }
-
+    /**
+     *
+     * Metóda na vymaznie všetkých dát
+     *
+     */
     public static void vymazVsetkyData() {
         db.removeValue(new DatabaseReference.CompletionListener() {
             @Override
@@ -577,6 +726,14 @@ public class DatabaseManager {
         });
     }
 
+    /**
+     *
+     * Metóda pre nájdenie podla poznamky a následne vymaznie trvalého príkazu
+     *
+     * @param nazovUctu
+     * @param vyhladavanyString
+     * @param novyTrvalyPrikaz
+     */
     public static void najdiAVymazTrvalyPrikaz(String nazovUctu, String vyhladavanyString, Vydaj novyTrvalyPrikaz) {
 
         db.child("trvalePrikazy").child(nazovUctu).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -605,6 +762,15 @@ public class DatabaseManager {
 
     }
 
+    /**
+     *
+     * Metóda na najdenie a vymaznie trvalého príkazu zo sporiaceho účtu
+     *
+     * @param nazovUctu
+     * @param isSporiaci
+     * @param novyTrvalyPrikaz
+     * @param percentoZuctovania
+     */
     public static void najdiAVymazTrvalyPrikaz(String nazovUctu, boolean isSporiaci, Prijem novyTrvalyPrikaz, Double percentoZuctovania) {
 
         db.child("trvalePrikazy").child(nazovUctu).addListenerForSingleValueEvent(new ValueEventListener() {

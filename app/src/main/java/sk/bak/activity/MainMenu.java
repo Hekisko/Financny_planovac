@@ -4,11 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -35,16 +30,22 @@ import sk.bak.utils.MySharedPreferences;
 import sk.bak.utils.SecurityCheck;
 import sk.bak.utils.Utils;
 
+
+/**
+ *
+ * Trieda hlavného menu aplikácie. Sú odtiaľto prepínané fragmenty
+ *
+ */
 public class MainMenu extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
-    private int aktualneZvolenyFragmentID = R.id.main_menu_navigation_domov;
+    private static final String TAG = "Main menu";
 
+    // UI komponenty
+    private BottomNavigationView bottomNavigationView;
     private FloatingActionButton pridajZaznam;
 
-    private BroadcastReceiver changeFragmentReceiver;
-
-    private static final String TAG = "Main menu";
+    // Pomocne premenne
+    private int aktualneZvolenyFragmentID = R.id.main_menu_navigation_domov;
 
     private MySharedPreferences sharedPreferences;
     @Override
@@ -140,33 +141,6 @@ public class MainMenu extends AppCompatActivity {
                 return true;
             }
         });
-
-        changeFragmentReceiver = new FragmentToParentActivityChangeFragment();
-        IntentFilter intentSFilter = new IntentFilter(Constants.CHANGE_FRAGMENT);
-        registerReceiver(changeFragmentReceiver, intentSFilter);
-    }
-
-
-
-    public class FragmentToParentActivityChangeFragment extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-
-            /*if (intent.getBooleanExtra(Constants.CREATE_NEW_ACCOUNT, false)) {
-                Toast.makeText(getApplicationContext(), "aaaaaaaaaa", Toast.LENGTH_SHORT).show();
-
-                aktualneZvolenyFragmentID = R.id.main_menu_frame_layout;
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_menu_frame_layout, new PridajNovyUcet()).commit();
-
-
-
-            }
-
-             */
-        }
     }
 
 }

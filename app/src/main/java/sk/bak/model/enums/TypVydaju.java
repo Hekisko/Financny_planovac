@@ -1,5 +1,10 @@
 package sk.bak.model.enums;
 
+/**
+ *
+ * Enum pre typ výdaju
+ *
+ */
 public enum TypVydaju {
 
     STRAVA("Strava"),

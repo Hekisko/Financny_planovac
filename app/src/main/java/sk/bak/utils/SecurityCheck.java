@@ -19,16 +19,33 @@ import androidx.fragment.app.FragmentActivity;
 
 import java.util.concurrent.Executor;
 
+
+/**
+ *
+ * Trieda na detekciu a následne spustanie kontroly hesla/patternu/pinu ... od zariadenia
+ *
+ */
 public class SecurityCheck {
 
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
-
+    // UI komponenty
     private Context context;
     private int layoutId;
     private Activity activity;
 
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
     private KeyguardManager keyguardManager;
+
+
+    /**
+     *
+     *  Init tejto triedy prebieha v MainMenu.java. Pred každým spustením musi prebehnut init.
+     *
+     *
+     * @param activity
+     * @param layoutId
+     * @param context
+     */
     public SecurityCheck(Activity activity, int layoutId, Context context) {
         this.context = context;
         this.layoutId = layoutId;
@@ -119,6 +136,12 @@ public class SecurityCheck {
         alertDialogBuilder.create().show();
     }
 
+
+    /**
+     *
+     * Metoda volana pri potrebe potrdenia zabezpecenia
+     *
+     */
     public void isDeviceSecured() {
         if (android.os.Build.VERSION.SDK_INT >= 30){
             biometricPrompt.authenticate(promptInfo);

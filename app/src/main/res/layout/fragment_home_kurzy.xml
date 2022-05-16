@@ -221,7 +221,7 @@
             android:id="@+id/kuzry_vzhladom_k_mene"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Prevody sa zobrazujú vzkľadom k mene Euro"
+            android:text="@string/kurzy_ku_mene"
             android:textAlignment="center"
             android:textSize="20dp"
             android:layout_margin="10dp"/>

@@ -25,7 +25,7 @@
                 android:id="@+id/pridaj_zaznam_ziadne_ucty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nie sú k dispozícii žiadne účty"
+                android:text="@string/dialog_pridaj_zaznam_ziadne_ucty"
                 android:textStyle="bold"
                 android:layout_margin="10dp"
                 android:textAlignment="center"
@@ -249,7 +249,7 @@
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:layout_gravity="center"
-                    android:text="Trvalý príkaz"
+                    android:text="@string/dialog_pridaj_zaznam_trvale_prikazy"
                     android:textSize="18dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -258,7 +258,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="8"
                     android:layout_margin="10dp"
-                    android:hint="Splatnosť"
+                    android:hint="@string/dialog_pridaj_zaznam_splatnost_hint"
                     android:layout_gravity="center"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu" >
 
@@ -300,7 +300,7 @@
                         android:id="@+id/pridaj_zaznam_suma"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Suma"
+                        android:hint="@string/dialog_pridaj_zaznam_suma_hint"
                         android:maxLength="50"
                         android:textSize="18dp"
                         android:textColor="@color/black"
@@ -314,7 +314,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:layout_margin="10dp"
-                    android:hint="Mena"
+                    android:hint="@string/dialog_pridaj_zaznam_mena_hint"
                     android:layout_gravity="center"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu" >
 
@@ -704,7 +704,7 @@
                         android:id="@+id/pridaj_zaznam_poznamka"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Poznámka"
+                        android:hint="@string/dialog_pridaj_zaznam_poznamka_hint"
                         android:maxLength="50"
                         android:textSize="18dp"
                         android:textColor="@color/black"

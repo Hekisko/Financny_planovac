@@ -27,7 +27,7 @@
                 android:id="@+id/prehlady_ziadne_ucty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nie sú k dispozícii žiadne účty"
+                android:text="@string/prehlady_ziaden_ucet"
                 android:textStyle="bold"
                 android:layout_margin="10dp"
                 android:textAlignment="center"
@@ -281,7 +281,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filter"
+                    android:text="@string/prehlady_filter"
                     android:textSize="20dp"
                     />
 
@@ -672,7 +672,7 @@
                 android:id="@+id/prehlady_ziadne_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Žiadne dáta na zobrazenie pre zvolené polia"
+                android:text="@string/prehlady_ziadne_data"
                 android:textStyle="bold"
                 android:layout_margin="10dp"
                 android:textAlignment="center"

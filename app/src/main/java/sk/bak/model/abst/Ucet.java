@@ -3,6 +3,12 @@ package sk.bak.model.abst;
 import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypyUctov;
 
+
+/**
+ *
+ * Základná trieda pre ucet. Je ďalej rozširovná
+ *
+ */
 public class Ucet {
 
     private String nazov;

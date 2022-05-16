@@ -1,17 +1,76 @@
 <resources>
     <string name="app_name">Finančný plánovač</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- Nastavenia -->
+    <string name="nastavenia_podpora">podpora</string>
+    <string name="nastavenia_podpora_text">Kontaktovať podporu</string>
+    <string name="nastavenia_odhlasenie">logOut</string>
+    <string name="nastavenia_odhlasenie_text">Odhlásiť sa</string>
+    <string name="nastavenia_vymazat_data">deleteAllData</string>
+    <string name="nastavenia_vymazat_data_text">Vymazať všetky dáta</string>
+    <string name="nastavenia_trvale_prikazy">trvalePrikazyPrepocitaj</string>
+    <string name="nastavenia_trvale_prikazy_text">Prepočítať trvalé príkazy</string>
+    <string name="nastavenia_trvale_prikazy_subtext">Trvalé príkazy sa prepočítavajú vždy pri spustený aplikácie, avšak možete prepočítavanie spustiť aj tu manuálne</string>
 
-    <!-- Rychly prehlad -->
+
+    <!-- Prehlady -->
+    <string name="prehlady_ziaden_ucet">Nie sú k dispozícii žiadne účty</string>
+    <string name="prehlady_filter">Filter</string>
+    <string name="prehlady_ziadne_data">Žiadne dáta na zobrazenie pre zvolené polia</string>
+
+    <!-- Auth Activity -->
+    <string name="auth_activity_prihlasenie_do_aplikacie">Prihláste sa do aplikácie pomocou Vášho Googlu účtu</string>
+
+    <!-- Trvaly prikaz item -->
+    <string name="trvaly_prikaz_item_den_splatnosti">Ďen splatnosti v mesiaci:</string>
+    <string name="trvaly_prikaz_item_poznamka">Poznámka:</string>
+    <string name="trvaly_prikaz_item_datum_pridania">Dátum pridania:</string>
+
+    <!-- Zaznam item -->
+    <string name="zaznam_item_poznamka">Poznámka:</string>
+    <string name="zaznam_item_datum_pridania">Dátum pridania:</string>
+
+
+
+    <!-- Pridaj novy ucet  -->
+    <string name="pridaj_novy_ucet_nazov">Názov účtu</string>
+    <string name="pridaj_novy_ucet_typ_uctu">Typ účtu</string>
+    <string name="pridaj_novy_ucet_vyberte_typ_uctu">Vyberte typ účtu</string>
+    <string name="pridaj_novy_ucet_mena_uctu">Mena účtu</string>
+    <string name="pridaj_novy_ucet_vyberte_mena_uctu">Vyberte menu pre účet</string>
+    <string name="pridaj_novy_ucet_usetrena_suma">Požadovaná mesačná ušetrená suma</string>
+    <string name="pridaj_novy_ucet_percento_zuctovania">Percento zúčtovania</string>
+    <string name="pridaj_novy_ucet_poplatok_za_ucet">Mesačný poplatok za vedenie účtu</string>
+
+    <!-- Dialog Pridaj zaznam  -->
+    <string name="dialog_pridaj_zaznam_ziadne_ucty">Nie sú k dispozícii žiadne účty</string>
+    <string name="dialog_pridaj_zaznam_trvale_prikazy">Trvalý príkaz</string>
+    <string name="dialog_pridaj_zaznam_splatnost_hint">Splatnosť</string>
+    <string name="dialog_pridaj_zaznam_suma_hint">Suma</string>
+    <string name="dialog_pridaj_zaznam_mena_hint">Mena</string>
+    <string name="dialog_pridaj_zaznam_poznamka_hint">Poznámka</string>
+
+
+    <!-- Dialog Trvale prikazy -->
+    <string name="dialog_trvale_prikazy">Trvalé príkazy</string>
+
+
+    <!-- Dialog Trvale zaznamy -->
+    <string name="dialog_zaznamy">Záznamy</string>
+
+
+    <!-- Rychly prehlad home -->
+    <string name="rychly_prehlad">Rýchly prehľad</string>
     <string name="rychly_prehlad_vydavky_7_dni">Výdavky za posledných 7 dní</string>
     <string name="rychly_prehlad_celkovy_zostatok">Celkový zostatok</string>
     <string name="rychly_prehlad_zostatok_dnesny_den">Zostatok na dnešný deň</string>
     <string name="rychly_prehlad_zostatok_tyzden">Zostatok na týždeň</string>
     <string name="rychly_prehlad_zostatok_mesiac">Zostatok do konca mesiaca</string>
+    <string name="rychly_prehlad_nacitavanie">Prebieha načítavanie</string>
 
-    <!-- Rychly prehlad -->
+    <!-- Rychly prehlad  kurzy -->
+    <string name="kurzy">Aktuálne kurzy</string>
     <string name="kurzy_konverzie_mien">Aktuálne konverzie hlavných svetových mien</string>
     <string name="kurzy_mena">Mena</string>
     <string name="kurzy_aktualna_hodnota">Aktuálna hodnota</string>
@@ -21,7 +80,8 @@
     <string name="kurzy_bitcoin">BITCOIN</string>
     <string name="kurzy_etherum">ETHERUM</string>
     <string name="kurzy_upozornenie">Upozornenie. Prevodové hodnoty sú len orientačné. V každej inštitúcii sa kurzy líšia, preto si ich vždy overujte aj v danej inštitúcii.</string>
-
+    <string name="kurzy_ku_mene">Prevody sa zobrazujú vzkľadom k mene Euro</string>
+    <string name="kurzy_nie_je_hlavny_ucet">Pre zobrazenie rýchleho prehľadu, musíte mať zvolený hlavný účet</string>
 
     <!-- Ucty -->
     <string name="bezny_ucet">Bežny účet</string>
@@ -30,6 +90,7 @@
     <string name="fragment_ucty_card_nazov_uctu">Názov účtu</string>
     <string name="fragment_ucty_card_typ_uctu">Typ účtu</string>
     <string name="fragment_ucty_card_suma_na_ucte">Aktuálny zostatok</string>
+    <string name="fragment_ucty_card_mena_uctu">Mena účtu</string>
 
 
     <!-- Arrays -->

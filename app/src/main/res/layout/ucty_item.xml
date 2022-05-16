@@ -124,7 +124,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mena účtu"
+                android:text="@string/fragment_ucty_card_mena_uctu"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:layout_weight="1"/>

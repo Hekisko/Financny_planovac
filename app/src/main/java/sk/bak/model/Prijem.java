@@ -7,6 +7,12 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypPrijmu;
 import sk.bak.model.enums.TypZaznamu;
 
+
+/**
+ *
+ * Trieda záznamu typu prijem
+ *
+ */
 public class Prijem extends VlozenyZaznam {
 
     private TypPrijmu typPrijmu;

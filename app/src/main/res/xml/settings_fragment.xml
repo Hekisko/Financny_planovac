@@ -4,24 +4,24 @@
     >
 
     <Preference
-        app:title="Prepočítať trvalé príkazy"
-        app:summary="Trvalé príkazy sa prepočítavajú vždy pri spustený aplikácie, avšak možete prepočítavanie spustiť aj tu manuálne"
-        app:key="trvalePrikazyPrepocitaj"
+        app:title="@string/nastavenia_trvale_prikazy_text"
+        app:summary="@string/nastavenia_trvale_prikazy_subtext"
+        app:key="@string/nastavenia_trvale_prikazy"
         />
 
     <Preference
-        app:title="Kontaktovať podporu"
-        app:key="podpora"
+        app:title="@string/nastavenia_podpora_text"
+        app:key="@string/nastavenia_podpora"
         />
 
     <Preference
-        app:title="Vymazať všetky dáta"
-        app:key="deleteAllData"
+        app:title="@string/nastavenia_vymazat_data_text"
+        app:key="@string/nastavenia_vymazat_data"
         />
 
     <Preference
-        app:title="Odhlásiť sa"
-        app:key="logOut"
+        app:title="@string/nastavenia_odhlasenie_text"
+        app:key="@string/nastavenia_odhlasenie"
         />
 
 

@@ -31,7 +31,7 @@
                     android:id="@+id/pridaj_novy_ucet_fragment_nazov"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Názov účtu"
+                    android:hint="@string/pridaj_novy_ucet_nazov"
                     android:maxLength="50"
                     android:textSize="18dp"
                     android:textColor="@color/black"
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/pridaj_novy_ucet_fragment_typ_text"
-                    android:text="Typ účtu"
+                    android:text="@string/pridaj_novy_ucet_typ_uctu"
                     android:textSize="18dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"/>
@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
-                    android:hint="Vyberte typ účtu"
+                    android:hint="@string/pridaj_novy_ucet_vyberte_typ_uctu"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu" >
 
                     <AutoCompleteTextView
@@ -103,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/pridaj_novy_ucet_fragment_mena_text"
-                    android:text="Mena účtu"
+                    android:text="@string/pridaj_novy_ucet_mena_uctu"
                     android:textSize="18dp"
                     android:layout_gravity="center"
                     android:layout_weight="1"/>
@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="7"
-                    android:hint="Vyberte menu pre účet"
+                    android:hint="@string/pridaj_novy_ucet_vyberte_mena_uctu"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu" >
 
                     <AutoCompleteTextView
@@ -147,7 +147,7 @@
                     android:id="@+id/pridaj_novy_ucet_fragment_odlozena_suma"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Požadovaná mesačná ušetrená suma"
+                    android:hint="@string/pridaj_novy_ucet_usetrena_suma"
                     android:maxLength="10"
                     android:textSize="18dp"
                     android:textColor="@color/black"
@@ -174,7 +174,7 @@
                     android:id="@+id/pridaj_novy_ucet_fragment_percento_zuctovania"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Percento zúčtovania"
+                    android:hint="@string/pridaj_novy_ucet_percento_zuctovania"
                     android:maxLength="10"
                     android:textSize="18dp"
                     android:textColor="@color/black"
@@ -200,7 +200,7 @@
                     android:id="@+id/pridaj_novy_ucet_fragment_poplatok_za_vedenie"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Mesačný poplatok za vedenie účtu"
+                    android:hint="@string/pridaj_novy_ucet_poplatok_za_ucet"
                     android:maxLength="6"
                     android:textSize="18dp"
                     android:textColor="@color/black"

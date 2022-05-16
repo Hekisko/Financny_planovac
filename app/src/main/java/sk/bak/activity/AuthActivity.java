@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,18 +31,26 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import sk.bak.R;
 
+
+/**
+ *
+ * Trieda pre prihlásenie sa do Google účtu
+ *
+ */
 public class AuthActivity extends AppCompatActivity {
 
+    private static final String TAG = "Auth activity";
+
+    // UI komponenty
     private ImageButton login;
 
-    private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
-
-    private ActivityResultLauncher<Intent> googleAuthActivityResultLauncher;
-
+    // Pomocne premenne
     private Activity currentActivity;
 
-    private static final String TAG = "Auth activity";
+    //Prihlasovanie
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
+    private ActivityResultLauncher<Intent> googleAuthActivityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,14 +91,36 @@ public class AuthActivity extends AppCompatActivity {
 
                             alertDialogBuilder.setPositiveButton("Ok", null);
                             alertDialogBuilder.create().show();
-                            // The ApiException status code indicates the detailed failure reason.
-                            // Please refer to the GoogleSignInStatusCodes class reference for more information.
                         }
                     }
                 });
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn(false);
+            }
+        });
+    }
+
+
+
+
+    //////////////////////////////////////////////////// Pomocné metódy
+
+    /**
+     *
+     * Metóda na prihlásenie sa do Google účtu
+     *
+     * @param forceSingIn
+     */
     private void signIn(boolean forceSingIn) {
 
         Log.i(TAG, "signIn: kliknute na prihlasit sa");
@@ -108,20 +137,12 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn(false);
-            }
-        });
-    }
-
-
+    /**
+     *
+     * Metóda na prihlásenie sa do Firebase cez Google účet
+     *
+     * @param idToken
+     */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         Log.i(TAG, "firebaseAuthWithGoogle: spustam firebase auth");
@@ -131,7 +152,6 @@ public class AuthActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.i(TAG, "onComplete: firebase ok");
-                            // Sign in success, update UI with the signed-in user's information
                             Intent menu = new Intent(getApplicationContext(), MainMenu.class);
                             startActivity(menu);
                             currentActivity.finish();

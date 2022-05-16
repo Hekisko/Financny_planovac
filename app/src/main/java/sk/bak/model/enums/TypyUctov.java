@@ -1,5 +1,11 @@
 package sk.bak.model.enums;
 
+
+/**
+ *
+ * Enum pre typ účtu
+ *
+ */
 public enum TypyUctov {
     BEZNY("Bežný účet", 0),
     SPORIACI("Sporiaci účet", 1),

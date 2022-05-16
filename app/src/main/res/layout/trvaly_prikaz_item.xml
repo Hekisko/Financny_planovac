@@ -29,7 +29,7 @@
                 android:id="@+id/trvaly_prikaz_item_suma"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Suma 567,0"
+                android:text="TU BUDE SUMA"
                 android:textSize="20dp"
                 android:layout_gravity="center"
                 android:textStyle="bold"
@@ -67,7 +67,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:text="Ďen splatnosti v mesiaci:" />
+                android:text="@string/trvaly_prikaz_item_den_splatnosti" />
 
             <TextView
                 android:id="@+id/trvaly_prikaz_item_den_splatnosti"
@@ -95,7 +95,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:text="Poznámka:" />
+                android:text="@string/trvaly_prikaz_item_poznamka" />
 
 
             <TextView
@@ -123,7 +123,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:text="Dátum pridania:" />
+                android:text="@string/trvaly_prikaz_item_datum_pridania" />
 
 
             <TextView

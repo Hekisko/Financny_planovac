@@ -5,6 +5,12 @@ import java.util.Date;
 import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypZaznamu;
 
+
+/**
+ *
+ * Základná triedy pre záznam. Je ďalej rozšírovaná
+ *
+ */
 public class VlozenyZaznam {
 
     private String id;

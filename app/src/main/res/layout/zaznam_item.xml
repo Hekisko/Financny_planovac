@@ -66,7 +66,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:text="Poznámka:" />
+                android:text="@string/zaznam_item_poznamka" />
 
 
             <TextView
@@ -94,7 +94,7 @@
                 android:layout_gravity="center"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:text="Dátum pridania:" />
+                android:text="@string/zaznam_item_datum_pridania" />
 
 
             <TextView

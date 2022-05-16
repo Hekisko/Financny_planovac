@@ -16,13 +16,22 @@ import java.util.Random;
 
 import sk.bak.R;
 
+
+/**
+ *
+ * Trieda pre obrazovku načítavania
+ *
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private Activity activity;
+    private static final String TAG = "Main Activity";
+
+    // UI komponenty
     private TextView citat;
     private TextView autor;
 
-    private static final String TAG = "Main Activity";
+    // Pomocne premenne
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

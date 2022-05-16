@@ -8,6 +8,12 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 
+
+/**
+ *
+ * Trieda zázanmu typu výdaj
+ *
+ */
 public class Vydaj extends VlozenyZaznam {
 
     private TypVydaju typVydaju;

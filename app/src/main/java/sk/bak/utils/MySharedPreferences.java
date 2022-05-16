@@ -14,12 +14,18 @@ import androidx.security.crypto.MasterKey;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+
+/**
+ *
+ * Custom trieda SharedPreferences. Upravená pre lepšie používanie
+ *
+ */
 public class MySharedPreferences {
 
-    SharedPreferences sharedPreferences;
-
-
     private static final String TAG = "SharedPref";
+
+    private SharedPreferences sharedPreferences;
+
     //nastavenie sharedPreferences
     public MasterKey inicializeMasterKey(Context context) {
         try {
@@ -42,6 +48,13 @@ public class MySharedPreferences {
         return null;
     }
 
+
+    /**
+     *
+     * Koštruktor triedy
+     *
+     * @param context
+     */
     public MySharedPreferences(Context context) {
         if (sharedPreferences == null) {
 
@@ -62,10 +75,13 @@ public class MySharedPreferences {
         Log.i(TAG, "MySharedPreferences: generated ok");
     }
 
-
     private SharedPreferences getPrefs() {
         return sharedPreferences;
     }
+
+
+    // Metody pre pracu so SharedPref
+
 
     public void clearPrefs() {
         SharedPreferences.Editor editor = getPrefs().edit();

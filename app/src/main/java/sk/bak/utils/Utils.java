@@ -3,8 +3,6 @@ package sk.bak.utils;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -16,8 +14,22 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 
+
+/**
+ *
+ * Trieda pre pomocne metody potrebne v celej aplikácii
+ *
+ */
 public class Utils {
 
+
+    /**
+     *
+     * Metóda na sťahovanie kurzov
+     *
+     * @param sharedPreferences
+     * @param context
+     */
     public static void nacitajKurzy(MySharedPreferences sharedPreferences, Context context) {
 
         long timePeriodToUpdate = 1000 * 60 * 60 * 48;  // 2 dni

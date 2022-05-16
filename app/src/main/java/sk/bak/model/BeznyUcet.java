@@ -4,6 +4,12 @@ import java.util.List;
 
 import sk.bak.model.abst.Ucet;
 
+
+/**
+ *
+ * Trieda bežného účtu
+ *
+ */
 public class BeznyUcet extends Ucet {
 
 

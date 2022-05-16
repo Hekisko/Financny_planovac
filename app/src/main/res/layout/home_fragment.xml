@@ -19,13 +19,13 @@
             android:id="@+id/home_fragment_tab_rychly_prehlad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rýchly prehľad" />
+            android:text="@string/rychly_prehlad" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/home_fragment_tab_kurzy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="aktuálne kurzy" />
+            android:text="@string/kurzy" />
 
     </com.google.android.material.tabs.TabLayout>
 

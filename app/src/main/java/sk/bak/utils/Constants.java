@@ -1,5 +1,10 @@
 package sk.bak.utils;
 
+/**
+ *
+ * Trieda určená pre ukladnie konštánt
+ *
+ */
 public class Constants {
 
     public static String PREF_NAME;
