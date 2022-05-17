@@ -8,6 +8,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import sk.bak.fragmenty.HomeFragmentKurzy;
 import sk.bak.fragmenty.HomeFragmentRychlyPrehlad;
 
+/**
+ *
+ * Trieda adapteru pre page switcher z home fragmnetu
+ *
+ */
 public class HomeFragmentViewPagerAdapter extends FragmentStateAdapter {
 
 

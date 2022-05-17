@@ -33,29 +33,46 @@ import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.enums.TypyUctov;
 
+
+/**
+ *
+ * Dialog pridaj novy ucet
+ *
+ */
 public class PridajNovyUcet extends Dialog {
 
-    private Ucet ucet;
-    private boolean prebiehaEdit = false;
 
+    // Pomocne premenne
+    private boolean prebiehaEdit = false;
+    private Activity parentActivity;
+    private Dialog currentDialog;
+
+    // UI premenne
     private TextInputLayout typSpinner;
     private TextInputLayout menaSpinner;
     private TextInputLayout nazov;
     private TextInputLayout usetrenaMesacnaSuma;
     private TextInputLayout percentoZuctovania;
     private TextInputLayout poplatokZaVedenieUctu;
-
-    private TypyUctov zvolenyTypUctu;
-    private Meny zvolenaMena;
-
-    private Activity parentActivity;
-    private Dialog currentDialog;
-
     private ImageButton back;
     private ImageButton save;
 
+    // Datove premenee
+    private Ucet ucet;
+    private TypyUctov zvolenyTypUctu;
+    private Meny zvolenaMena;
+
+    // Listenery db
+
+
     private static final String TAG = "PridajNovyUcet";
 
+    /**
+     *
+     * Konstruktor pre vytvranie noveho uctu
+     *
+     * @param activity
+     */
     public PridajNovyUcet(@NonNull Activity activity) {
         super(activity);
 
@@ -64,6 +81,13 @@ public class PridajNovyUcet extends Dialog {
         this.ucet = null;
     }
 
+    /**
+     *
+     * Konstruktor editaciu uz existujuheo uctu
+     *
+     * @param activity
+     * @param ucet
+     */
     public PridajNovyUcet(@NonNull Activity activity, Ucet ucet) {
         super(activity);
 
@@ -83,6 +107,7 @@ public class PridajNovyUcet extends Dialog {
         final View customLayout = getLayoutInflater().inflate(R.layout.pridaj_novy_ucet_fragment, null);
         setContentView(customLayout);
 
+        //init vyskakovacieho okna
         DisplayMetrics displayMetrics = new DisplayMetrics();
         parentActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int displayWidth = displayMetrics.widthPixels;
@@ -98,12 +123,16 @@ public class PridajNovyUcet extends Dialog {
         initButtony();
 
         if (ucet != null) {
-
             fillDialogWithData();
         }
 
     }
 
+    /**
+     *
+     * Pomocna metona pre naplennie okna datamy
+     *
+     */
     private void fillDialogWithData() {
 
         nazov.getEditText().setText(ucet.getNazov());
@@ -149,6 +178,12 @@ public class PridajNovyUcet extends Dialog {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre ini tlacidiel
+     *
+     */
     private void initButtony() {
 
         back = findViewById(R.id.pridaj_novy_ucet_fragment_button_back);
@@ -201,6 +236,7 @@ public class PridajNovyUcet extends Dialog {
 
                             DatabaseManager.saveUcet(novyUcetSpo);
 
+                            // zapisovanie trvaleho prikazu pre sporiaci ucet
                             Prijem zuctovanie = new Prijem();
                             zuctovanie.setMena(zvolenaMena);
                             zuctovanie.setNazovUctu(nazov.getEditText().getText().toString());
@@ -238,6 +274,7 @@ public class PridajNovyUcet extends Dialog {
 
                     Log.i(TAG, "onClick uloz ucet: ukladanie uctu DONE");
 
+                    // zapisovanie poplatku za vedienie uctu
                     if (Double.parseDouble(poplatokZaVedenieUctu.getEditText().getText().toString()) != 0.) {
 
                         Vydaj vedenieUctu = new Vydaj();
@@ -274,6 +311,13 @@ public class PridajNovyUcet extends Dialog {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre validaciu dat
+     *
+     * @return
+     */
     private boolean validateData() {
         boolean result = true;
 
@@ -329,6 +373,14 @@ public class PridajNovyUcet extends Dialog {
         return result;
     }
 
+
+    /**
+     *
+     * Pomocna metoda aby zistila ci uz taky nazov existuje
+     *
+     * @param nazov
+     * @return
+     */
     private boolean validateNazov(String nazov) {
 
         List<Ucet> ucty = DatabaseManager.getUcty();
@@ -342,6 +394,11 @@ public class PridajNovyUcet extends Dialog {
         return true;
     }
 
+    /**
+     *
+     * Pomocna metoda pre init ostatnych prkov
+     *
+     */
     private void initOstatne() {
 
         nazov = findViewById(R.id.pridaj_novy_ucet_fragment_nazov_layout);
@@ -354,6 +411,12 @@ public class PridajNovyUcet extends Dialog {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init spinneru pre menu
+     *
+     */
     private void initSpinnerMenaUctu() {
 
         menaSpinner = findViewById(R.id.pridaj_novy_ucet_fragment_mena_spinner_layout);
@@ -391,6 +454,12 @@ public class PridajNovyUcet extends Dialog {
         });
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init spinneru pre typ uctu
+     *
+     */
     private void initSpinnerTypUctu() {
 
         typSpinner = findViewById(R.id.pridaj_novy_ucet_fragment_typ_spinner_layout);

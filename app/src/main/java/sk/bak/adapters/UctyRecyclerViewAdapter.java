@@ -30,16 +30,22 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypyUctov;
 import sk.bak.utils.MySharedPreferences;
 
+
+/**
+ *
+ * Trieda adapteru pre zobrazenie uctov v RecyclerView
+ *
+ */
 public class UctyRecyclerViewAdapter extends RecyclerView.Adapter<UctyRecyclerViewAdapter.UctyViewHolder> {
 
+    private static final String TAG = "UctyRecyclerViewAdapter";
 
+    // Pomocne premnne
     private Context context;
-
-    private List<Ucet> zoznamUctovRecyclerView;
-
     private MySharedPreferences sharedPreferences;
 
-    private static final String TAG = "UctyRecyclerViewAdapter";
+    // Datove premenne
+    private List<Ucet> zoznamUctovRecyclerView;
 
     public UctyRecyclerViewAdapter(Context context, List<Ucet> zoznamUctovRecyclerView) {
         this.context = context;
@@ -56,6 +62,13 @@ public class UctyRecyclerViewAdapter extends RecyclerView.Adapter<UctyRecyclerVi
         return new UctyViewHolder(v);
     }
 
+    /**
+     *
+     * Nastavuje komponenty v itemView podla dat
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull UctyViewHolder holder, int position) {
 
@@ -188,6 +201,11 @@ public class UctyRecyclerViewAdapter extends RecyclerView.Adapter<UctyRecyclerVi
         return zoznamUctovRecyclerView.size();
     }
 
+    /**
+     *
+     * Viaze komponenty na XML subor
+     *
+     */
     public static class UctyViewHolder extends RecyclerView.ViewHolder {
 
         TextView nazovUctu;

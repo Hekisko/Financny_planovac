@@ -59,11 +59,22 @@ import sk.bak.model.enums.TypyUctov;
 import sk.bak.utils.MySharedPreferences;
 import sk.bak.utils.Utils;
 
-
+/**
+ *
+ * Dialog pre pridanie zaznamu
+ *
+ */
 public class PridajZaznamDialog extends Dialog {
 
-    private Dialog thisDialog;
+    private static final String TAG = "PridajZaznamDialog";
 
+    //Pomocne premenne
+    private Dialog thisDialog;
+    private boolean isTransfer;
+    private MySharedPreferences sharedPreferences;
+    private Activity parentActivity;
+
+    // UI premenne
     private CardView ucet1;
     private TextView ucet1_text;
     private CardView ucet2;
@@ -74,27 +85,15 @@ public class PridajZaznamDialog extends Dialog {
     private TextView ucet4_text;
     private CardView ucet5;
     private TextView ucet5_text;
-    private CardView[] selectedUcetZaznamu = {null};
-    private CardView[] selectedUcetPrevodZ = {null};
-    private CardView[] selectedUcetPrevodNa = {null};
     private CardView[] zoznamCardView = {ucet1, ucet2, ucet3, ucet4, ucet5};
     private TextView[] zoznamNazvovUctov = {ucet1_text, ucet2_text, ucet3_text, ucet4_text, ucet5_text};
-
-
     private CardView prijem;
     private CardView utrata;
     private CardView transfer;
-    private boolean isTransfer;
-    private CardView[] selectedTypZaznamu = {null};
-
     private TextInputLayout suma;
     private TextInputLayout mena;
-    private Meny menaZaznamu;
-
     private CheckBox trvalyPrikaz;
     private TextInputLayout trvylayPrikazSplatnost;
-    private int denSplatnosti = 0;
-
     private CardView jedlo;
     private CardView cestovanie;
     private CardView elektro;
@@ -107,30 +106,32 @@ public class PridajZaznamDialog extends Dialog {
     private CardView house;
     private CardView drogeria;
     private CardView ostatne;
-    private TypVydaju typVydaju;
-    private CardView[] selectedUcelZaznamu = {null};
     private LinearLayout ucelLine1;
     private LinearLayout ucelLine2;
     private LinearLayout ucelLine3;
     private View ucelSeparator;
-
     private ImageButton back;
     private ImageButton saveZaznam;
-
     private TextInputLayout poznamka;
     private TextView ziadneUcty;
 
-    private View.OnClickListener selectedOnClickListener;
+
+    // Datove premenne
+    private CardView[] selectedUcetZaznamu = {null};
+    private CardView[] selectedUcetPrevodZ = {null};
+    private CardView[] selectedUcetPrevodNa = {null};
+    private CardView[] selectedTypZaznamu = {null};
+    private Meny menaZaznamu;
+    private int denSplatnosti = 0;
+    private TypVydaju typVydaju;
+    private CardView[] selectedUcelZaznamu = {null};
+
+
+
+    // Listenery
     private View.OnClickListener uctyListner;
     private View.OnClickListener typZaznamuListener;
     private View.OnClickListener iconyListner;
-
-
-    private MySharedPreferences sharedPreferences;
-
-    private Activity parentActivity;
-
-    private static final String TAG = "PridajZaznamDialog";
 
     public PridajZaznamDialog(Activity activity) {
         super(activity);
@@ -171,7 +172,7 @@ public class PridajZaznamDialog extends Dialog {
         initIcony();
         initTlacidla();
 
-
+        // Skrytie filtru
         ucelLine1.setVisibility(View.GONE);
         ucelLine2.setVisibility(View.GONE);
         ucelLine3.setVisibility(View.GONE);
@@ -179,6 +180,11 @@ public class PridajZaznamDialog extends Dialog {
 
     }
 
+    /**
+     *
+     * Pomocna metona na init listenerov
+     *
+     */
     private void initListnery() {
 
         uctyListner = new View.OnClickListener() {
@@ -330,6 +336,11 @@ public class PridajZaznamDialog extends Dialog {
 
     }
 
+    /**
+     *
+     * Pomocna metona pre init casti Trvaly Prikaz
+     *
+     */
     private void initTrvalyPrikaz() {
 
         trvalyPrikaz = findViewById(R.id.pridaj_zaznam_trvaly_prikaz);
@@ -353,6 +364,11 @@ public class PridajZaznamDialog extends Dialog {
 
     }
 
+    /**
+     *
+     * Pomocna metoda pre init tlacidiel
+     *
+     */
     private void initTlacidla() {
 
         back = findViewById(R.id.pridaj_zaznam_spat);
@@ -383,6 +399,12 @@ public class PridajZaznamDialog extends Dialog {
         });
     }
 
+    /**
+     *
+     * Pomocna metoda na validovanie inputu
+     *
+     * @return
+     */
     private boolean validateInput() {
 
         boolean result = true;
@@ -419,6 +441,12 @@ public class PridajZaznamDialog extends Dialog {
         return result;
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init ikon
+     *
+     */
     private void initIcony() {
 
 
@@ -465,6 +493,12 @@ public class PridajZaznamDialog extends Dialog {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init casti suma
+     *
+     */
     private void initInputSumy() {
 
         poznamka = findViewById(R.id.pridaj_zaznam_poznamka_layout);
@@ -472,6 +506,11 @@ public class PridajZaznamDialog extends Dialog {
         initSpinnerMenaUctu();
     }
 
+    /**
+     *
+     * Pomocna metoda pre init casti typZaznamu
+     *
+     */
     private void initTypZaznamu() {
 
         prijem = findViewById(R.id.pridaj_zaznam_prijem_card);
@@ -489,110 +528,10 @@ public class PridajZaznamDialog extends Dialog {
         });
     }
 
-
-    /*
-    private class SelectedItemListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-
-            switch (v.getId()) {
-                case R.id.pridaj_zaznam_ucet_1_layout:
-                    nastavPozadie(ucet1, selectedUcetZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucet_2_layout:
-                    nastavPozadie(ucet2, selectedUcetZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucet_3_layout:
-                    nastavPozadie(ucet3, selectedUcetZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucet_4_layout:
-                    nastavPozadie(ucet4, selectedUcetZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucet_5_layout:
-                    nastavPozadie(ucet5, selectedUcetZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_prijem_card:
-                    nastavPozadie(prijem, selectedTypZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_utrata_card:
-                    nastavPozadie(utrata, selectedTypZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_jedlo_card:
-                    typVydaju = TypVydaju.STRAVA;
-                    nastavPozadie(jedlo, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_cestovanie_card:
-                    typVydaju = TypVydaju.CESTOVANIE;
-                    nastavPozadie(cestovanie, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_elektro_card:
-                    typVydaju = TypVydaju.ELEKTRO;
-                    nastavPozadie(elektro, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_sport_card:
-                    typVydaju = TypVydaju.SPORT;
-                    nastavPozadie(sport, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_car_card:
-                    typVydaju = TypVydaju.DOPRAVA;
-                    nastavPozadie(auto, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_family_card:
-                    typVydaju = TypVydaju.RODINA;
-                    nastavPozadie(rodina, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_games_card:
-                    typVydaju = TypVydaju.ZAVABA;
-                    nastavPozadie(hry, selectedUcelZaznamu);
-                    break;
-                case R.id.pridaj_zaznam_ucel_cloth_card:
-                    typVydaju = TypVydaju.OBLECENIE;
-                    nastavPozadie(oblecenie, selectedUcelZaznamu);
-                    break;
-            }
-        }
-    }
-
-
-    private void nastavPozadie(CardView newSelectedCardView, CardView[] oldSelectedCardView) {
-
-        if (oldSelectedCardView != selectedUcelZaznamu) {
-
-            isTransfer = false;
-            if (selectedUcetPrevodZ[0] != null) selectedUcetPrevodZ[0].setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            if (selectedUcetPrevodNa[0] != null) selectedUcetPrevodNa[0].setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            transfer.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-        }
-
-        if (newSelectedCardView.getId() == R.id.pridaj_zaznam_utrata_card) {
-
-            ucelLine1.setVisibility(View.VISIBLE);
-            ucelLine2.setVisibility(View.VISIBLE);
-            ucelSeparator.setVisibility(View.VISIBLE);
-
-        } else if (newSelectedCardView.getId() == R.id.pridaj_zaznam_prijem_card) {
-
-            ucelLine1.setVisibility(View.GONE);
-            ucelLine2.setVisibility(View.GONE);
-            ucelSeparator.setVisibility(View.GONE);
-        }
-
-
-        if (newSelectedCardView.equals(oldSelectedCardView[0])) {
-            oldSelectedCardView[0] = null;
-            newSelectedCardView.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-        } else {
-            if (oldSelectedCardView[0] != null) {
-                oldSelectedCardView[0].setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            }
-
-            oldSelectedCardView[0] = newSelectedCardView;
-            newSelectedCardView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(),R.color.blue_600)));
-        }
-
-    }
-
+    /**
+     *
+     * Pomocna metoda pre init zobrazenia uctov
+     *
      */
     private void initUcty() {
 
@@ -660,6 +599,11 @@ public class PridajZaznamDialog extends Dialog {
     }
 
 
+    /**
+     *
+     * Trida potreb pre pohyb s UI komponentami
+     *
+     */
     private class MyOnDragListener implements View.OnDragListener {
 
         @Override
@@ -700,6 +644,13 @@ public class PridajZaznamDialog extends Dialog {
         }
     }
 
+    /**
+     *
+     * Pomocna metoda pre ulozenie zaznamu do databazy
+     *
+     * @param selectedUcetSave
+     * @param selectedTypSave
+     */
     private void savaToDB(CardView selectedUcetSave,
                           CardView selectedTypSave) {
 
@@ -778,6 +729,16 @@ public class PridajZaznamDialog extends Dialog {
         thisDialog.cancel();
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre tranfer medzi menami
+     *
+     * @param sumaVoZvolenejMene
+     * @param menaZvolenehoUctu
+     * @param menaZaznamu
+     * @return
+     */
     private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
 
         if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
@@ -792,6 +753,14 @@ public class PridajZaznamDialog extends Dialog {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre ziskanie meny zvolene uctu
+     *
+     * @param selectedUcetSave
+     * @return
+     */
     private Meny getMenaUctu(CardView selectedUcetSave) {
 
         String nazovUctu = (String) ((TextView)selectedUcetSave.getChildAt(0)).getText();
@@ -806,6 +775,12 @@ public class PridajZaznamDialog extends Dialog {
         return null;
     }
 
+
+    /**
+     *
+     * Trieda pre ucty co sa ma stat po dlhom stlaceni
+     *
+     */
     private class MyOnLongClickListener implements View.OnLongClickListener {
 
         @Override
@@ -817,6 +792,12 @@ public class PridajZaznamDialog extends Dialog {
         }
     }
 
+
+    /**
+     *
+     * Trieda pre ucty co sa ma stat po kliknuti na ne
+     *
+     */
     private class MyOnTouchListener implements View.OnTouchListener {
 
         @Override
@@ -828,6 +809,11 @@ public class PridajZaznamDialog extends Dialog {
         }
     }
 
+    /**
+     *
+     * Pomocna trieda pre init spinneru pre menu
+     *
+     */
     private void initSpinnerMenaUctu() {
 
         mena = findViewById(R.id.pridaj_zaznam_mena_layout);

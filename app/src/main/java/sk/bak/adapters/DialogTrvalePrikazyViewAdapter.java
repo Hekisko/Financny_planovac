@@ -25,12 +25,20 @@ import sk.bak.model.enums.Meny;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.abst.VlozenyZaznam;
 
+
+/**
+ *
+ * Trieda adapteru pre zobrazenie trvalych prikazov v RecyclerView
+ *
+ */
 public class DialogTrvalePrikazyViewAdapter extends RecyclerView.Adapter<DialogTrvalePrikazyViewAdapter.TrvalePrikazyViewHolder> {
 
     private static final String TAG = "DialogTrvalePrikazyViewAdapter";
 
+    // POmocne premnenne
     private Context context;
 
+    // Dátové premenne
     private List<VlozenyZaznam> zoznamTrvalychPrikazovRecyclerView;
 
 
@@ -47,6 +55,13 @@ public class DialogTrvalePrikazyViewAdapter extends RecyclerView.Adapter<DialogT
         return new TrvalePrikazyViewHolder(v);
     }
 
+    /**
+     *
+     * Nastavuje komponenty v itemView podla dat
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull TrvalePrikazyViewHolder holder, int position) {
 
@@ -146,6 +161,12 @@ public class DialogTrvalePrikazyViewAdapter extends RecyclerView.Adapter<DialogT
         return zoznamTrvalychPrikazovRecyclerView.size();
     }
 
+
+    /**
+     *
+     * Viaze komponenty na XML subor
+     *
+     */
     public static class TrvalePrikazyViewHolder extends RecyclerView.ViewHolder {
 
         TextView suma;

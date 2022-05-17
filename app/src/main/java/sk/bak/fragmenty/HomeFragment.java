@@ -19,10 +19,16 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import sk.bak.R;
 import sk.bak.adapters.HomeFragmentViewPagerAdapter;
 
+/**
+ *
+ * Fragment Domov - ďalej sa deli na rychle prehlady a kurzy
+ */
 public class HomeFragment extends Fragment {
 
+    // Pomocne premenne
     private View currentView;
 
+    // UI premenne
     private ViewPager2 viewPager2;
     private FragmentStateAdapter viewPagerAdapter;
     private TabLayout tabLayout;
@@ -51,12 +57,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         }).attach();
-
-
-
-
-
-
         return currentView;
     }
 }

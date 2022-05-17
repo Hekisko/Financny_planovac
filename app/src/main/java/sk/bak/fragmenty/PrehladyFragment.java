@@ -76,17 +76,25 @@ import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.enums.TypyUctov;
 import sk.bak.utils.MySharedPreferences;
 
-
+/**
+ *
+ * Fragment pre zobrazovanie prehladov
+ *
+ */
 public class PrehladyFragment extends Fragment {
-
+    private static final String TAG = "PrehladyFragment";
     private final String[] MESIACE_SLOVENSKY = {"Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "Decemnber"};
 
-
-    private static final String TAG = "PrehladyFragment";
+    // Pomocne premenne
     private View currentView;
+    private Calendar calendarPreGrafy;
+    private boolean isFilterOn = false;
+    private DatabaseReference databaseReferenceListeningAt;
+    private MySharedPreferences sharedPreferences;
+
+    // UI premenne
     private TextView ziadneData;
     private TextView ziadneUcty;
-
     private CardView ucet1;
     private TextView ucet1_text;
     private CardView ucet2;
@@ -97,12 +105,10 @@ public class PrehladyFragment extends Fragment {
     private TextView ucet4_text;
     private CardView ucet5;
     private TextView ucet5_text;
-    private CardView[] selectedUcetPrehladu = {null};
 
     private CardView pieChartCardButton;
     private CardView lineChartCardButton;
     private CardView rychlePrehladyCardButton;
-    private CardView[] selectedTypGrafu = {null};
 
     private LinearLayout datumLayout;
     private ImageButton datumSpat;
@@ -112,12 +118,8 @@ public class PrehladyFragment extends Fragment {
     Animation animationOutBack;
     Animation animationInForw;
     Animation animationOuForw;
-    Calendar calendarPreGrafy;
-    View.OnClickListener posunDatumuListener;
-
 
     private ImageButton filterExpandButton;
-    private boolean isFilterOn = false;
     private LinearLayout filterExpandButtonLayout;
 
     private CardView jedlo;
@@ -132,24 +134,26 @@ public class PrehladyFragment extends Fragment {
     private CardView drogeria;
     private CardView ostatne;
     private CardView animal;
-    private CardView[] selectedUcelZaznamu = {null};
     private LinearLayout ucelIconyLayout;
 
     private PieChart pieChart;
-
     private LineChart lineChart;
-
     private View rychlePrehlady;
 
+
+    // Datove premenne
+    private CardView[] selectedUcetPrehladu = {null};
+    private CardView[] selectedTypGrafu = {null};
+    private CardView[] selectedUcelZaznamu = {null};
+    private Set<String> zvoleneFiltre;
+
+
+    // Listenery
+    private View.OnClickListener posunDatumuListener;
     private View.OnClickListener ucetClick;
     private View.OnClickListener grafClick;
     private View.OnClickListener filterClick;
-
-    private Set<String> zvoleneFiltre;
-
-    private DatabaseReference databaseReferenceListeningAt;
     private ValueEventListener pouzivanyListner;
-    private MySharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -182,6 +186,30 @@ public class PrehladyFragment extends Fragment {
         return currentView;
     }
 
+    /**
+     *
+     * Po skonceni je trba odregistrovat listenery na db
+     *
+     */
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (databaseReferenceListeningAt != null && pouzivanyListner != null) {
+            databaseReferenceListeningAt.removeEventListener(pouzivanyListner);
+            databaseReferenceListeningAt = null;
+            pouzivanyListner = null;
+        }
+
+        odregistrujRychlePrehlady();
+    }
+
+
+
+    /**
+     *
+     * Pomocna metoda pre init listenerov
+     *
+     */
     private void initListenery() {
 
         ucetClick = new View.OnClickListener() {
@@ -297,6 +325,11 @@ public class PrehladyFragment extends Fragment {
         
     }
 
+    /**
+     *
+     * Pomocna metoda pre naplenenie zvoleho grafu datami
+     *
+     */
     private void fillGrafy() {
 
         Log.i(TAG, "fillGrafy: START");
@@ -318,6 +351,11 @@ public class PrehladyFragment extends Fragment {
         Log.i(TAG, "fillGrafy: DONE");
     }
 
+    /**
+     *
+     * Pomocna metoda pre zobrazenie zvolene grafu
+     *
+     */
     private void showGrafy() {
 
         Log.i(TAG, "showGrafy: START");
@@ -340,19 +378,36 @@ public class PrehladyFragment extends Fragment {
         Log.i(TAG, "showGrafy: DONE");
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre skrytie vsetkych grafov a ich casti
+     *
+     */
     private void skryGrafy() {
         Log.i(TAG, "skryGrafy: START");
+        calendarPreGrafy = Calendar.getInstance();
         datumLayout.setVisibility(View.GONE);
         filterExpandButtonLayout.setVisibility(View.GONE);
         ucelIconyLayout.setVisibility(View.GONE);
         pieChart.setVisibility(View.GONE);
         lineChart.setVisibility(View.GONE);
         rychlePrehlady.setVisibility(GONE);
+        ziadneData.setVisibility(GONE);
         odregistrujRychlePrehlady();
+        datum.setInAnimation(null);
+        datum.setOutAnimation(null);
         changeFilterBool(false);
         Log.i(TAG, "skryGrafy: DONE");
     }
 
+    /**
+     *
+     * Pomocna metoda na vkladnie alebo mazanie zvolenych filtrov do monoziny
+     *
+     * @param typFiltru
+     * @param v
+     */
     private void vlozAleboVymaz(String typFiltru, View v) {
         
         if (zvoleneFiltre.contains(typFiltru)) {
@@ -367,6 +422,11 @@ public class PrehladyFragment extends Fragment {
         
     }
 
+    /**
+     *
+     * Pomocna metoda pre init ciaroveho grafu
+     *
+     */
     private void initLineChart() {
 
         lineChart = currentView.findViewById(R.id.prehlady_linechart);
@@ -375,6 +435,11 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocna metoda pre init kolacoveho grafu
+     *
+     */
     private void initPieChart() {
 
         pieChart = currentView.findViewById(R.id.prehlady_piechart);
@@ -382,6 +447,11 @@ public class PrehladyFragment extends Fragment {
         pieChart.setVisibility(View.GONE);
     }
 
+    /**
+     *
+     * Pomocna metoda pre init ikon
+     *
+     */
     private void initIcony() {
 
         ucelIconyLayout = currentView.findViewById(R.id.prehlady_layout_pre_filter_icony);
@@ -425,6 +495,12 @@ public class PrehladyFragment extends Fragment {
         ucelIconyLayout.setVisibility(View.GONE);
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init filtrov
+     *
+     */
     private void initFilter() {
 
         filterExpandButtonLayout = currentView.findViewById(R.id.prehlady_filter_button_layout);
@@ -450,6 +526,10 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocna metoda na zmenu viditelnosti filtru
+     */
     private void changeFilterBool(boolean isOpen) {
 
         if (!zvoleneFiltre.isEmpty()) {
@@ -470,6 +550,11 @@ public class PrehladyFragment extends Fragment {
     }
 
 
+    /**
+     *
+     * Pomocna metoda pre natavenie zobrazovaneho obdobia
+     *
+     */
     private void nastavDatum(boolean isPieChart) {
 
         Log.i(TAG, "nastavDatum: START");
@@ -489,6 +574,12 @@ public class PrehladyFragment extends Fragment {
         Log.i(TAG, "nastavDatum: START");
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init komponentu pre posun datumu
+     *
+     */
     private void initPosunDatumu() {
 
         datumLayout = currentView.findViewById(R.id.prehlady_layout_pre_posun_datumu);
@@ -519,6 +610,11 @@ public class PrehladyFragment extends Fragment {
     }
 
 
+    /**
+     *
+     * Trieda starajuca a o posun datumu a jeho nasledky
+     *
+     */
     private class PosunDatumu implements View.OnClickListener {
 
         @Override
@@ -559,6 +655,11 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * Pomocna metoda pre init casti typ grafu
+     *
+     */
     private void initTypGraphSelection() {
 
         rychlePrehladyCardButton = currentView.findViewById(R.id.prehlady_rychle_prehlady_card);
@@ -571,6 +672,12 @@ public class PrehladyFragment extends Fragment {
         lineChartCardButton.setOnClickListener(grafClick);
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre init uctov
+     *
+     */
     private void initUcty() {
         List<Ucet> aktivneUcty = new ArrayList<>();
 
@@ -621,80 +728,11 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
-    /*
-    private void nastavPozadie(CardView newSelectedCardView, CardView[] oldSelectedCardView) {
-
-        if (newSelectedCardView.getId() == R.id.prehlady_linechart_card) {
-
-            if (newSelectedCardView.equals(oldSelectedCardView[0])) {
-                datumLayout.setVisibility(View.GONE);
-                lineChart.setVisibility(View.GONE);
-            } else {
-                datumLayout.setVisibility(View.VISIBLE);
-                initLineChartWithData();
-            }
-
-            filterExpandButtonLayout.setVisibility(View.GONE);
-            ucelIconyLayout.setVisibility(View.GONE);
-            pieChart.setVisibility(View.GONE);
-            lineChart.setVisibility(View.VISIBLE);
-            calendarPreGrafy = Calendar.getInstance();
-            datum.setInAnimation(null);
-            datum.setOutAnimation(null);
-            nastavDatum(false);
-
-
-        } else if (newSelectedCardView.getId() == R.id.prehlady_piechart_card) {
-
-
-            if (newSelectedCardView.equals(oldSelectedCardView[0])) {
-                datumLayout.setVisibility(View.GONE);
-                filterExpandButtonLayout.setVisibility(View.GONE);
-                ucelIconyLayout.setVisibility(View.GONE);
-                pieChart.setVisibility(View.GONE);
-                changeFilterBool(false);
-            } else {
-                datumLayout.setVisibility(View.VISIBLE);
-                filterExpandButtonLayout.setVisibility(View.VISIBLE);
-                if (isFilterOn) {
-                    ucelIconyLayout.setVisibility(View.VISIBLE);
-                }
-                initPieChartWithData();
-            }
-
-            pieChart.setVisibility(View.VISIBLE);
-            lineChart.setVisibility(View.GONE);
-            calendarPreGrafy = Calendar.getInstance();
-            datum.setInAnimation(null);
-            datum.setOutAnimation(null);
-            nastavDatum(true);
-        }
-
-
-        if (newSelectedCardView.equals(oldSelectedCardView[0])) {
-            oldSelectedCardView[0] = null;
-            newSelectedCardView.setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-        } else {
-            if (oldSelectedCardView[0] != null) {
-                oldSelectedCardView[0].setBackgroundTintList(ColorStateList.valueOf(Color.WHITE));
-            }
-
-            oldSelectedCardView[0] = newSelectedCardView;
-            newSelectedCardView.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(),R.color.blue_600)));
-        }
-
-        if (selectedTypGrafu[0] == null || selectedUcetPrehladu[0] == null) {
-            datumLayout.setVisibility(View.GONE);
-            filterExpandButtonLayout.setVisibility(View.GONE);
-            ucelIconyLayout.setVisibility(View.GONE);
-            pieChart.setVisibility(View.GONE);
-            lineChart.setVisibility(View.GONE);
-        }
-
-    }
-
+    /**
+     *
+     * Pomocna metoda pre naplnenie kolacoveho grafu datami
+     *
      */
-
     private void initPieChartWithData() {
 
         Log.i(TAG, "initPieChartWithData: START");
@@ -870,6 +908,12 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre naplnenie ciaroveho grafu datami
+     *
+     */
     private void initLineChartWithData() {
 
         Log.i(TAG, "initLineChartWithData: START");
@@ -1038,6 +1082,11 @@ public class PrehladyFragment extends Fragment {
         databaseReferenceListeningAt.addValueEventListener(pouzivanyListner);
     }
 
+    /**
+     *
+     * Trieda pre formatovanie mesiacov ciaroveho grafu
+     *
+     */
     private class xAxisFormatter extends ValueFormatter {
 
         @Override
@@ -1046,6 +1095,11 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * Pomocna metoda pre formatovanie sumy v ciarovom grafe
+     *
+     */
     private class yAxisFormatter extends ValueFormatter {
 
         private String znak;
@@ -1064,6 +1118,11 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocna metoda pre formatovanie meny v kolacovaom grafe
+     *
+     */
     private class MenaValueFormatter extends ValueFormatter {
 
         private String znak;
@@ -1082,88 +1141,23 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
-    /*
-    private class SelectedItemListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-
-            switch (v.getId()) {
-                case R.id.prehlady_ucet_1_layout:
-                    nastavPozadie(ucet1, selectedUcetPrehladu);
-                    break;
-                case R.id.prehlady_ucet_2_layout:
-                    nastavPozadie(ucet2, selectedUcetPrehladu);
-                    break;
-                case R.id.prehlady_ucet_3_layout:
-                    nastavPozadie(ucet3, selectedUcetPrehladu);
-                    break;
-                case R.id.prehlady_ucet_4_layout:
-                    nastavPozadie(ucet4, selectedUcetPrehladu);
-                    break;
-                case R.id.prehlady_ucet_5_layout:
-                    nastavPozadie(ucet5, selectedUcetPrehladu);
-                    break;
-                case R.id.prehlady_piechart_card:
-                    nastavPozadie(pieChartCardButton, selectedTypGrafu);
-                    break;
-                case R.id.prehlady_linechart_card:
-                    nastavPozadie(lineChartCardButton, selectedTypGrafu);
-                    break;
-                case R.id.prehlady_ucel_jedlo_card:
-                    nastavPozadie(jedlo, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_cestovanie_card:
-                    nastavPozadie(cestovanie, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_elektro_card:
-                    nastavPozadie(elektro, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_sport_card:
-                    nastavPozadie(sport, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_car_card:
-                    nastavPozadie(auto, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_family_card:
-                    nastavPozadie(rodina, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_games_card:
-                    nastavPozadie(hry, selectedUcelZaznamu);
-                    break;
-                case R.id.prehlady_ucel_cloth_card:
-                    nastavPozadie(oblecenie, selectedUcelZaznamu);
-                    break;
-            }
-        }
-
-    }
-
-     */
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (databaseReferenceListeningAt != null && pouzivanyListner != null) {
-            databaseReferenceListeningAt.removeEventListener(pouzivanyListner);
-            databaseReferenceListeningAt = null;
-            pouzivanyListner = null;
-        }
-
-        odregistrujRychlePrehlady();
-    }
-
-
-
-
-
-
     ////////////////////////////////////////////////////////////
+    // Nasledujuci kod obsahuje upravenu funcionalitu(zobrazuje len jeden zvoleny ucet) ako Domov - rychyl prehlad
     ////////////////////////////////////////////////////////////
+    //
+    //
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Adapter na home rychly prehlad
+    // Len tieto metody komuniku zo zvyskom triedy
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //
+    //
 
-
+    /**
+     *
+     * Pomocna metoda pre init rychleho prehladu
+     *
+     */
     private void initRychlePrehlady() {
         initRychlyPrehlad();
         spustRychlePrehlady();
@@ -1171,6 +1165,11 @@ public class PrehladyFragment extends Fragment {
     }
 
 
+    /**
+     *
+     * Pomocna metoda na odregostrovanie listenerov z rychleho prehladu
+     *
+     */
     private void odregistrujRychlePrehlady() {
         if (rychlyPrehlad_zvolenyUcetNazov != null && !rychlyPrehlad_zvolenyUcetNazov.equals("")  ) {
             ukonciRychlePrehlady();
@@ -1180,19 +1179,23 @@ public class PrehladyFragment extends Fragment {
     }
 
     ////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////
+    // koniec adapteru
     ////////////////////////////////////////////////////////////
     /**
-     *
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      * Kod pre rychly prehlad
-     *
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
 
+
+    // Pomocne premenne
+    private BeznyUcet rychlyPrehlad_aktualnyUcet;
+    private String rychlyPrehlad_zvolenyUcetNazov;
+
+
+
+    // UI premenne
     private BarChart rychlyPrehlad_barChart;
-
-    private int[] rychlyPrehlad_poslednych7Dni = new int[7];
-    private List<String> rychlyPrehlad_dniTyzdnaNaX;
-
     private ScrollView rychlyPrehlad_scrollView;
     private TextView rychlyPrehlad_upozornenie;
     private TextView rychlyPrehlad_nacitavanieText;
@@ -1202,23 +1205,26 @@ public class PrehladyFragment extends Fragment {
     private TextView rychlyPrehlad_tyzden;
     private TextView rychlyPrehlad_mesiac;
 
+    // Datove premenne
+    private int[] rychlyPrehlad_poslednych7Dni = new int[7];
+    private List<String> rychlyPrehlad_dniTyzdnaNaX;
     private List<Ucet> rychlyPrehlad_ucty;
-    private BeznyUcet rychlyPrehlad_aktualnyUcet;
-    private String rychlyPrehlad_zvolenyUcetNazov;
-
     Map<Integer, List<Double>> rychlyPrehlad_sumyMinuteZaPoslednych7Dni;
+    List<Prijem> rychlyPrehlad_zaznamyPrijem;
+    List<Vydaj> rychlyPrehlad_zaznamyVydaj;
 
-
+    // Listenery
     ValueEventListener rychlyPrehlad_listenerNaUcty;
     ValueEventListener rychlyPrehlad_listenerNaTrvalePrikazy;
     ValueEventListener rychlyPrehlad_listenerNaZaznamyAktualnyMesiac;
     ValueEventListener rychlyPrehlad_listenerNaZaznamyMinulyMesiac;
 
-    List<Prijem> rychlyPrehlad_zaznamyPrijem;
-    List<Vydaj> rychlyPrehlad_zaznamyVydaj;
-
-
-    public void initRychlyPrehlad() {
+    /**
+     *
+     * Pomocna metoda pre init celho rychleho prehladu
+     *
+     */
+    private void initRychlyPrehlad() {
         // Inflate the layout for this fragment
 
         rychlyPrehlad_zvolenyUcetNazov = ((TextView)selectedUcetPrehladu[0].getChildAt(0)).getText().toString();
@@ -1241,6 +1247,30 @@ public class PrehladyFragment extends Fragment {
         initListners();
     }
 
+    /**
+     *
+     * Pomocna metoda spusta rychle prehlady
+     *
+     */
+    public void spustRychlePrehlady() {
+        initView();
+    }
+
+    /**
+     *
+     * Inicializuje listener - spusta rychle prehlady
+     *
+     */
+    private void initView() {
+
+        DatabaseManager.getDb().child("ucty").addValueEventListener(rychlyPrehlad_listenerNaUcty);
+    }
+
+    /**
+     *
+     * Pomocna metoda pre init listenerov
+     *
+     */
     private void initListners() {
 
         rychlyPrehlad_listenerNaUcty = new ValueEventListener() {
@@ -1466,11 +1496,11 @@ public class PrehladyFragment extends Fragment {
 
     }
 
-    private void initView() {
-
-        DatabaseManager.getDb().child("ucty").addValueEventListener(rychlyPrehlad_listenerNaUcty);
-    }
-
+    /**
+     *
+     * Pomocna metoda na nastavenie sum do UI komponetov
+     *
+     */
     private void nastavSumy() {
 
         Calendar aktualnyDatum = Calendar.getInstance();
@@ -1486,6 +1516,14 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre spocitanie prijmov
+     *
+     * @param zaznamyPrijem
+     * @return
+     */
     private Double spocitajPrijem(List<Prijem> zaznamyPrijem) {
 
         Double result = .0;
@@ -1499,10 +1537,12 @@ public class PrehladyFragment extends Fragment {
         return result;
     }
 
-    public void spustRychlePrehlady() {
-        initView();
-    }
 
+    /**
+     *
+     * Pomocna metoda pre korektne ukoncenie rychlych prehladov
+     *
+     */
     public void ukonciRychlePrehlady() {
 
         Calendar aktualnyDatum = Calendar.getInstance();
@@ -1540,6 +1580,11 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * Nastavuje a zobrazuje cele rychle prehlady
+     *
+     */
     private void initBarChart() {
 
         Log.i(TAG, "initBarChart: zacinam nastavovat bar chart");
@@ -1608,6 +1653,11 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * Trieda formatuje zobrazovane sumy v grafe
+     *
+     */
     private class yAxisFormatterRychlyPrehlad extends ValueFormatter {
 
         private Meny mena;
@@ -1625,6 +1675,11 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * Trieda formatuje dni v tyzdni
+     *
+     */
     private class xAxisFormatterRychlyPrehlad extends ValueFormatter {
 
         @Override
@@ -1633,6 +1688,11 @@ public class PrehladyFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * Pomocna metoda na nastavenie poslednych 7 dni
+     *
+     */
     private void initPoslednych7Dni() {
 
         Calendar calendar = Calendar.getInstance();
@@ -1652,6 +1712,13 @@ public class PrehladyFragment extends Fragment {
 
     }
 
+
+    /**
+     *
+     * Pomocna metoda pre zobrazenie chyboveho dialogu
+     *
+     * @param chyba
+     */
     private void nastalaChyba(String chyba) {
 
         AlertDialog.Builder chybaBuilder = new AlertDialog.Builder(getContext());
@@ -1663,6 +1730,15 @@ public class PrehladyFragment extends Fragment {
         chybaBuilder.create().show();
     }
 
+    /**
+     *
+     * Trieda pre prevod sum medzi menami
+     *
+     * @param sumaVoZvolenejMene
+     * @param menaZvolenehoUctu
+     * @param menaZaznamu
+     * @return
+     */
     private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
 
         if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {

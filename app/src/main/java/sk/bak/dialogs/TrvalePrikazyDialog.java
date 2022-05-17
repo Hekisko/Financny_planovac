@@ -30,18 +30,29 @@ import sk.bak.model.abst.VlozenyZaznam;
 import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 
+/**
+ *
+ * Trieda dialog pre trvale prikazy
+ *
+ */
 public class TrvalePrikazyDialog extends Dialog {
 
-    private RecyclerView recyclerView;
-    private DialogTrvalePrikazyViewAdapter adapterRecyclerView;
-    private List<VlozenyZaznam> zoznamTrvalychPrikazov;
+    private static final String TAG = "TrvalePrikazyDialog";
 
+    // Pomocne premenne
     private Activity parentActivity;
     private String nazovUctu;
 
+    // Datove premenne
+    private List<VlozenyZaznam> zoznamTrvalychPrikazov;
+
+    // UI premenne
+    private RecyclerView recyclerView;
+    private DialogTrvalePrikazyViewAdapter adapterRecyclerView;
+
+    // Listenry db
     private ValueEventListener valueEventListener;
 
-    private static final String TAG = "TrvalePrikazyDialog";
 
     public TrvalePrikazyDialog(Activity activity, String nazovUctu) {
         super(activity);
@@ -58,6 +69,7 @@ public class TrvalePrikazyDialog extends Dialog {
         final View customLayout = getLayoutInflater().inflate(R.layout.dialog_trvale_prikazy, null);
         setContentView(customLayout);
 
+        // Nastavenie vyskakovacieho okna
         DisplayMetrics displayMetrics = new DisplayMetrics();
         parentActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int displayWidth = displayMetrics.widthPixels;
@@ -71,23 +83,40 @@ public class TrvalePrikazyDialog extends Dialog {
 
         getWindow().setAttributes(layoutParams);
 
-
+        // RecyclerView fill
         recyclerView = findViewById(R.id.dialog_trvale_prikazy_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
         zoznamTrvalychPrikazov = new ArrayList<>();
-
         adapterRecyclerView = new DialogTrvalePrikazyViewAdapter(getContext(), zoznamTrvalychPrikazov);
-
         recyclerView.setAdapter(adapterRecyclerView);
-
         fillRecyclerView();
 
 
     }
 
+
+    /**
+     *
+     * Po ukonceni je treba listener odregistrovat
+     *
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (valueEventListener != null) {
+            DatabaseManager.getDb()
+                    .child("trvalePrikazy")
+                    .child(nazovUctu)
+                    .removeEventListener(valueEventListener);
+        }
+    }
+
+    /**
+     *
+     * Pomocna metoda na naplenie recyclerView
+     *
+     */
     private void fillRecyclerView() {
 
         valueEventListener = new ValueEventListener() {
@@ -134,21 +163,11 @@ public class TrvalePrikazyDialog extends Dialog {
         };
 
 
+        // priraduje dany listener
         DatabaseManager.getDb()
                 .child("trvalePrikazy")
                 .child(nazovUctu)
                 .addValueEventListener(valueEventListener);
 
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (valueEventListener != null) {
-            DatabaseManager.getDb()
-                    .child("trvalePrikazy")
-                    .child(nazovUctu)
-                    .removeEventListener(valueEventListener);
-        }
     }
 }

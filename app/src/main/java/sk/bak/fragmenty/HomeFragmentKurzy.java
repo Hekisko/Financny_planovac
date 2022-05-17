@@ -30,24 +30,27 @@ import sk.bak.model.abst.Ucet;
 import sk.bak.model.enums.Meny;
 import sk.bak.utils.MySharedPreferences;
 
-
+/**
+ *
+ * Trieda Fragmentu Kurzy
+ *
+ */
 public class HomeFragmentKurzy extends Fragment {
 
+    private static  final String TAG = "HomeFragmentKurzy";
+
+    // Pomocne premenne
     private MySharedPreferences sharedPreferences;
-
     private View currentView;
+    private Ucet hlavnyUcet;
 
+    // UI premenne
     private TextView usdHodnota;
     private TextView eurHodnota;
     private TextView czkHodnota;
     private TextView btcHodnota;
     private TextView ethHodnota;
     private TextView porovnavanaMena;
-
-
-    private Ucet hlavnyUcet;
-
-    private static  final String TAG = "HomeFragmentKurzy";
 
     public HomeFragmentKurzy() {
         // Required empty public constructor
@@ -81,6 +84,11 @@ public class HomeFragmentKurzy extends Fragment {
         return currentView;
     }
 
+    /**
+     *
+     * Pomocna metóda na naplnenie UI dátami
+     *
+     */
     private void updateUI() {
 
         Log.i(TAG, "updateUI: zaciatok update ui");
@@ -121,6 +129,11 @@ public class HomeFragmentKurzy extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocná metóda na update kurzov. Nie je pouzita z Utils pretože je treba z nej zavolat updateUI()
+     *
+     */
     private void updateKurzy() {
 
         Log.i(TAG, "updateKurzy: zaciatok stahovania kurzov");
@@ -135,7 +148,6 @@ public class HomeFragmentKurzy extends Fragment {
             RequestQueue queue = Volley.newRequestQueue(getContext());
             String url = "https://openexchangerates.org/api/latest.json?app_id=7b554313ef2f4c7995bcde37a5d31b22&base=USD&show_alternative=true";
 
-            // Request a string response from the provided URL.
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                     new Response.Listener<String>() {
                         @Override
@@ -187,8 +199,6 @@ public class HomeFragmentKurzy extends Fragment {
 
             queue.add(stringRequest);
 
-
         }
-
     }
 }

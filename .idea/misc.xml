@@ -5,8 +5,23 @@
       <map>
         <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/drawable/ic_graf_rychle_prehlady.xml" value="0.2703125" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/drawable/ic_linechart.xml" value="0.2703125" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/activity_auth.xml" value="0.2006340579710145" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/activity_main_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/dialog_pridaj_zaznam.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/dialog_trvale_prikazy.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/dialog_zobrazenie_zaznamov.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/drop_down_menu_list_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/fragment_home_kurzy.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/fragment_home_rychly_prehlad.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/home_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/prehlady_fragment.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/pridaj_novy_ucet_fragment.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/trvaly_prikaz_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/ucty_fragment.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/ucty_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/layout/zaznam_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/hekis/Desktop/Bak_app - github/app/src/main/res/xml/settings_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/custom_progress_bar.xml" value="0.2703125" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/ic_baseline_star_24_selected.xml" value="0.2703125" />
         <entry key="..\:/Users/hekis/Desktop/Bak_app/app/src/main/res/drawable-v24/ic_delete_smaller.xml" value="0.3769230769230769" />

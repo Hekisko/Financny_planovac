@@ -26,11 +26,17 @@ import sk.bak.model.enums.TypVydaju;
 import sk.bak.model.enums.TypZaznamu;
 import sk.bak.model.abst.VlozenyZaznam;
 
+
+/**
+ *
+ * Trieda adapteru pre zobrazenie zaznamov v RecyclerView
+ *
+ */
 public class DialogZaznamyViewAdapter extends RecyclerView.Adapter<DialogZaznamyViewAdapter.ZaznamyViewHolder> {
-
-
+    // Pomocne premenne
     private Context context;
 
+    // Datove premenne
     private List<VlozenyZaznam> zoznamZaznamovRecyclerView;
 
     private static final String TAG = "DialogZaznamyViewAdapter";
@@ -48,6 +54,13 @@ public class DialogZaznamyViewAdapter extends RecyclerView.Adapter<DialogZaznamy
         return new ZaznamyViewHolder(v);
     }
 
+    /**
+     *
+     * Nastavuje komponenty v itemView podla dat
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull ZaznamyViewHolder holder, int position) {
 
@@ -156,6 +169,11 @@ public class DialogZaznamyViewAdapter extends RecyclerView.Adapter<DialogZaznamy
         return zoznamZaznamovRecyclerView.size();
     }
 
+    /**
+     *
+     * Viaze komponenty na XML subor
+     *
+     */
     public static class ZaznamyViewHolder extends RecyclerView.ViewHolder {
 
         TextView suma;

@@ -45,20 +45,24 @@ import sk.bak.model.abst.VlozenyZaznam;
 import sk.bak.model.Vydaj;
 import sk.bak.model.enums.TypZaznamu;
 
+/**
+ *
+ * Dialog na zobrazenie zaznamov
+ *
+ */
 public class ZobrazenieZaznamovDialog extends Dialog {
 
+    private static final String TAG = "ZobrazenieZaznamovDialog";
     private final String[] MESIACE_SLOVENSKY = {"Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "Decemnber"};
 
+    // Pomocne premenne
+    private Activity parentActivity;
+    private String nazovUctu;
+    private Calendar calendarPrePosun;
+
+    // UI premenne
     private RecyclerView recyclerView;
     private DialogZaznamyViewAdapter adapterRecyclerView;
-    private List<VlozenyZaznam> zoznamZaznamov;
-
-    private Activity parentActivity;
-
-    //private TahanieDataZDBBradcastReciever serviceReceiver;
-
-    private String nazovUctu;
-
     private LinearLayout datumLayout;
     private ImageButton datumSpat;
     private ImageButton datumDopredu;
@@ -67,12 +71,13 @@ public class ZobrazenieZaznamovDialog extends Dialog {
     private Animation animationOutBack;
     private Animation animationInForw;
     private Animation animationOuForw;
-    private Calendar calendarPrePosun;
     private View.OnClickListener posunDatumuListener;
 
-    private ValueEventListener valueEventListener;
+    // Datove premenne
+    private List<VlozenyZaznam> zoznamZaznamov;
 
-    private static final String TAG = "ZobrazenieZaznamovDialog";
+    // Listnery db
+    private ValueEventListener valueEventListener;
 
     public ZobrazenieZaznamovDialog(Activity activity, String nazovUctu) {
         super(activity);
@@ -88,6 +93,7 @@ public class ZobrazenieZaznamovDialog extends Dialog {
         final View customLayout = getLayoutInflater().inflate(R.layout.dialog_zobrazenie_zaznamov, null);
         setContentView(customLayout);
 
+        // init vyskakovacieho okna
         DisplayMetrics displayMetrics = new DisplayMetrics();
         parentActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int displayWidth = displayMetrics.widthPixels;
@@ -101,41 +107,40 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
         getWindow().setAttributes(layoutParams);
 
-
         initPosunDatumu();
 
+        // init recyclerView
         recyclerView = findViewById(R.id.zobrazenie_zaznamov_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
         zoznamZaznamov = new ArrayList<>();
-
-
-       /* Prijem prijem = new Prijem(TypPrijmu.DAR, 100., Meny.EUR, Calendar.getInstance().getTime());
-        Prijem prijem1 = new Prijem(TypPrijmu.DAR, 200., Meny.EUR, Calendar.getInstance().getTime());
-        Vydaj vydaj = new Vydaj(TypVydaju.STRAVA, 25., Meny.EUR, Calendar.getInstance().getTime());
-
-        zoznamZaznamov.add(prijem);
-        zoznamZaznamov.add(prijem1);
-        zoznamZaznamov.add(vydaj);
-
-        */
-
         adapterRecyclerView = new DialogZaznamyViewAdapter(getContext(), zoznamZaznamov);
-
         recyclerView.setAdapter(adapterRecyclerView);
 
-        //DatabaseManager.getVsetkyZaznamyZaMesiacUctu(nazovUctu, Calendar.getInstance(), null, getContext());
         fillRecyclerView();
-
 
         adapterRecyclerView.notifyDataSetChanged();
 
-        //serviceReceiver = new TahanieDataZDBBradcastReciever();
-        //IntentFilter intentSFilter = new IntentFilter("dataOk");
-        //getContext().registerReceiver(serviceReceiver, intentSFilter);
+    }
 
+    /**
+     *
+     * Po ukonceni je treba odregistrovat
+     *
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        Log.i(TAG, "onStop: odstranujem listner");
+
+        if (valueEventListener != null) {
+            DatabaseManager.getDb()
+                    .child("zaznamy")
+                    .child(nazovUctu)
+                    .child(calendarPrePosun.get(Calendar.YEAR) + "_" + (calendarPrePosun.get(Calendar.MONTH) + 1))
+                    .removeEventListener(valueEventListener);
+        }
     }
 
     private void initPosunDatumu() {
@@ -172,22 +177,12 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
 
-        Log.i(TAG, "onStop: odstranujem listner");
-
-        if (valueEventListener != null) {
-            DatabaseManager.getDb()
-                    .child("zaznamy")
-                    .child(nazovUctu)
-                    .child(calendarPrePosun.get(Calendar.YEAR) + "_" + (calendarPrePosun.get(Calendar.MONTH) + 1))
-                    .removeEventListener(valueEventListener);
-        }
-    }
-
-
+    /**
+     *
+     * Listener aktivonay ked dojde ku zmene zobrazovaneho obdobia
+     *
+     */
     private class PosunDatumu implements View.OnClickListener {
 
         @Override
@@ -223,6 +218,12 @@ public class ZobrazenieZaznamovDialog extends Dialog {
         }
     }
 
+
+    /**
+     *
+     * Pomocna metona na naplnenie recyclerView datami
+     *
+     */
     private void fillRecyclerView() {
 
         valueEventListener = new ValueEventListener() {
@@ -260,6 +261,7 @@ public class ZobrazenieZaznamovDialog extends Dialog {
 
         Log.i(TAG, "fillRecyclerView: nastavavujem novy listener");
 
+        // register listener
         DatabaseManager.getDb()
                 .child("zaznamy")
                 .child(nazovUctu)
@@ -267,24 +269,6 @@ public class ZobrazenieZaznamovDialog extends Dialog {
                 .addValueEventListener(valueEventListener);
 
     }
-
-    //public class TahanieDataZDBBradcastReciever extends BroadcastReceiver {
-//
-    //    @Override
-    //    public void onReceive(Context context, Intent intent) {
-//
-//
-    //        if (intent.getBooleanExtra("ended", false)) {
-//
-    //            zoznamZaznamov.clear();
-    //            zoznamZaznamov.addAll(DatabaseManager.getZaznamy());
-    //            adapterRecyclerView.notifyDataSetChanged();
-//
-    //        }
-    //    }
-    //}
-
-
 
 }
 

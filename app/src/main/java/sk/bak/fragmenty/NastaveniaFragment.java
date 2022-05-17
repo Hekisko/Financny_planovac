@@ -23,10 +23,22 @@ import sk.bak.activity.AuthActivity;
 import sk.bak.managers.DatabaseManager;
 import sk.bak.utils.MySharedPreferences;
 
+
+/**
+ *
+ * Trieda fragmentu Nastavenia
+ *
+ */
 public class NastaveniaFragment extends PreferenceFragmentCompat {
 
     private static final String TAG = "NastaveniaFragment";
 
+
+    /**
+     *
+     * Tu sa len postupne definuju onClickListenery pre dané nastavnia
+     *
+     */
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.settings_fragment, rootKey);

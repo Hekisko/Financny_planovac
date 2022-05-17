@@ -33,35 +33,53 @@ import sk.bak.model.SporiaciUcet;
 import sk.bak.model.enums.TypyUctov;
 import sk.bak.model.abst.Ucet;
 
+
+/**
+ *
+ * Trieda fragmentu Ucty
+ *
+ */
 public class UctyFragment extends Fragment {
-
-    private RecyclerView recyclerView;
-    private DatabaseReference database;
-    private UctyRecyclerViewAdapter adapterRecyclerView;
-    private List<Ucet> zoznamUctov;
-
-    private ValueEventListener valueEventListener;
-
-    private FloatingActionButton pridajUcet;
-
-    private View currentView;
 
     private static final String  TAG = "UctyFragment";
 
+    // Pomocne premenne
+    private DatabaseReference database;
+    private View currentView;
+
+
+    // Datove premenne
+    private List<Ucet> zoznamUctov;
+
+    // UI premenne
+    private RecyclerView recyclerView;
+    private UctyRecyclerViewAdapter adapterRecyclerView;
+    private FloatingActionButton pridajUcet;
+
+    // Listenery db
+    private ValueEventListener valueEventListener;
+
+
+    /**
+     *
+     * Prebieha hlavne inizializacia a nastavovanie RecyclerView
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         currentView = inflater.inflate(R.layout.ucty_fragment, container, false);
 
-
+        // nastavovanie RecyclerView
         recyclerView = currentView.findViewById(R.id.ucty_fragment_recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         zoznamUctov = new ArrayList<>();
-
         adapterRecyclerView = new UctyRecyclerViewAdapter(getContext(), zoznamUctov);
-
         recyclerView.setAdapter(adapterRecyclerView);
 
         pridajUcet = currentView.findViewById(R.id.ucty_fragment_pridaj_ucet);
@@ -89,13 +107,6 @@ public class UctyFragment extends Fragment {
                 });
 
                 pridajNovyUcet.show();
-
-                /*Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(Constants.CHANGE_FRAGMENT);
-                broadcastIntent.putExtra(Constants.CREATE_NEW_ACCOUNT, true);
-                getContext().sendBroadcast(broadcastIntent);
-
-                 */
             }
         });
 
@@ -109,6 +120,12 @@ public class UctyFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
+    /**
+     *
+     * onResume zakjlada listner a nasledne naplni komponenty UI
+     *
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -150,6 +167,12 @@ public class UctyFragment extends Fragment {
         DatabaseManager.getDb().child("ucty").addValueEventListener(valueEventListener);
     }
 
+
+    /**
+     *
+     * Po skonceni je treba odregistrovat listenery
+     *
+     */
     @Override
     public void onPause() {
         super.onPause();

@@ -65,16 +65,17 @@ import sk.bak.utils.MySharedPreferences;
 import sk.bak.utils.Utils;
 
 
+/**
+ *
+ * Trieda fragmentu rychly prehlad
+ *
+ */
 public class HomeFragmentRychlyPrehlad extends Fragment {
 
+    private static final String TAG = "HomeFragmentRychlyPrehlad";
 
+    // UI premenne
     private BarChart barChart;
-
-    private View currentView;
-
-    private int[] poslednych7Dni = new int[7];
-    private List<String> dniTyzdnaNaX;
-
     private ScrollView scrollView;
     private TextView upozornenie;
     private TextView nacitavanieText;
@@ -84,36 +85,37 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
     private TextView tyzden;
     private TextView mesiac;
 
+    // Pomocne premenne
+    private View currentView;
+    private MySharedPreferences sharedPreferences;
+
+
+    // Datove premenne
+    private int[] poslednych7Dni = new int[7];
+    private List<String> dniTyzdnaNaX;
     private List<Ucet> ucty;
     private BeznyUcet hlavnyUcet;
-
-    private static final String TAG = "HomeFragmentRychlyPrehlad";
-
     private Map<Integer, List<Double>> sumyMinuteZaPoslednych7Dni;
+    private List<Prijem> zaznamyPrijem;
+    private List<Vydaj> zaznamyVydaj;
+    private Double vydajeCelkovo = .0;
+    private Double prijmyCelkovo = .0;
+    private Double chcemaUsetrenaSumaCelkovo = .0;
+    private Double zostatokCelkovo = .0;
+    private Meny zvolenaMena;
 
+
+    // Listenery db
     private ValueEventListener celkovyListener;
-
     private ValueEventListener listenerNaUcty;
     private ValueEventListener listenerNaTrvalePrikazy;
     private ValueEventListener listenerNaZaznamyAktualnyMesiac;
     private ValueEventListener listenerNaZaznamyMinulyMesiac;
 
-    private List<Prijem> zaznamyPrijem;
-    private List<Vydaj> zaznamyVydaj;
-
-
-    private Double vydajeCelkovo = .0;
-    private Double prijmyCelkovo = .0;
-    private Double chcemaUsetrenaSumaCelkovo = .0;
-    private Double zostatokCelkovo = .0;
-    private MySharedPreferences sharedPreferences;
-
-    private Meny zvolenaMena;
 
     public HomeFragmentRychlyPrehlad() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -124,11 +126,11 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         currentView = inflater.inflate(R.layout.fragment_home_rychly_prehlad, container, false);
 
         sharedPreferences = new MySharedPreferences(getContext());
 
+        // init UI
         scrollView = currentView.findViewById(R.id.home_fragment_rychly_prehlad_scroll_view);
         upozornenie = currentView.findViewById(R.id.home_fragment_rychly_prehlad_upozornenie);
         nacitavanieText = currentView.findViewById(R.id.home_fragment_rychly_prehlad_nacitavanie);
@@ -138,6 +140,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         tyzden = currentView.findViewById(R.id.home_fragment_rychly_prehlad_tyzden);
         mesiac = currentView.findViewById(R.id.home_fragment_rychly_prehlad_koniec_mesiaca);
 
+        // nastav spravnu vidtelnost
         Log.i(TAG, "onCreateView: nastajuvem layout na gone");
         nacitavanieText.setVisibility(View.VISIBLE);
         nacitavanieProgressBar.setVisibility(View.VISIBLE);
@@ -149,8 +152,71 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         return currentView;
     }
 
+    /**
+     *
+     * Tu zacina vsetko
+     *
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        initView();
+    }
+
+
+    /**
+     *
+     * Po ukonceni treba odregistrovat vsetky pouzivane listenery
+     *
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        /*Calendar aktualnyDatum = Calendar.getInstance();
+        Calendar minulyMesaic = Calendar.getInstance();
+        minulyMesaic.add(Calendar.MONTH, -1);
+
+        DatabaseManager.getDb().child("ucty").removeEventListener(listenerNaUcty);
+        if (hlavnyUcet != null) {
+            DatabaseManager
+                    .getDb()
+                    .child("zaznamy")
+                    .child(hlavnyUcet.getNazov())
+                    .child(aktualnyDatum.get(Calendar.YEAR) + "_" + (aktualnyDatum.get(Calendar.MONTH) + 1))
+                    .removeEventListener(listenerNaZaznamyAktualnyMesiac);
+
+
+            DatabaseManager
+                    .getDb()
+                    .child("zaznamy")
+                    .child(hlavnyUcet.getNazov())
+                    .child(minulyMesaic.get(Calendar.YEAR) + "_" + (minulyMesaic.get(Calendar.MONTH) + 1))
+                    .removeEventListener(listenerNaZaznamyMinulyMesiac);
+
+            DatabaseManager
+                    .getDb()
+                    .child("trvalePrikazy")
+                    .child(hlavnyUcet.getNazov())
+                    .removeEventListener(listenerNaTrvalePrikazy);
+        }
+
+         */
+
+        DatabaseManager.getDb().removeEventListener(celkovyListener);
+
+        nacitavanieProgressBar.setVisibility(View.VISIBLE);
+        nacitavanieText.setVisibility(View.VISIBLE);
+        upozornenie.setVisibility(GONE);
+        scrollView.setVisibility(GONE);
+
+
+    }
+
     private void initListners() {
 
+        // listner na vsetky data pouzivatela pre zobrazenie celkoveho prehladu
         celkovyListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -195,8 +261,10 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                     zvolenaMena = hlavnyUcet.getMena();
                 }
 
+                // idem prechadzat vsetky data
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
 
+                    // vetva ucty
                     if (dataSnapshot.getKey().equals("ucty")) {
 
                         for (DataSnapshot uctySnapshot: dataSnapshot.getChildren()) {
@@ -221,6 +289,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
                     }
 
+                    // vetvy trvale prikazy
                     if (dataSnapshot.getKey().equals("trvalePrikazy")) {
 
                         for (DataSnapshot trvalePrikazyUcty: dataSnapshot.getChildren()) {
@@ -252,6 +321,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
                     }
 
+                    // vetva zaznamy
                     if (dataSnapshot.getKey().equals("zaznamy")) {
 
                         for (DataSnapshot zaznamyUcty: dataSnapshot.getChildren()) {
@@ -291,7 +361,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
                 }
 
-
+                // zaciatok vypoctov potrebnych sum
                 Log.i(TAG, "onDataChange: zacinam pocitat sumy");
                 Double mesacnaSumaPrijem = spocitajPrijem(zaznamyPrijem);
 
@@ -335,6 +405,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                 Double ostavajucaSumaNaMesiac = mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic;
 
 
+                // nastvatovanie hodnot
                 if (zvolenaMena == Meny.BTC || zvolenaMena == Meny.ETH) {
                     celkovyZostatok.setText(String.format("%.8f %s", zostatokCelkovo, zvolenaMena.getZnak()));
                     dnesnyDen.setText(String.format("%.8f %s", ostavajucaSumaNaMesiac / pocetOstavajucichDniVMesiaci, zvolenaMena.getZnak()));
@@ -345,7 +416,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                     mesiac.setText(String.format("%.02f %s", mesacnaSumaNaMinanie - sumyMinutaZaCelyMesaic, zvolenaMena.getZnak()));
                 }
 
-
+                // kontrola ci je treba ziskat udaje aj z predosleho mesiaca  pre zobrazenie poslednych 7 dni
                 if (aktualnyDatum.get(Calendar.MONTH) == kalendarNaPosunDatumu.get(Calendar.MONTH)) {
 
                     Log.i(TAG, "onDataChange: trvaleprikazy init barchart");
@@ -361,6 +432,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
                     int pocetDniZMinulehoMesiaca = 7 - aktualnyDatum.get(Calendar.DAY_OF_MONTH);
                     int odDna = minulyMesiac.getActualMaximum(Calendar.DAY_OF_MONTH) - pocetDniZMinulehoMesiaca;
 
+                    // treba ziskat aj zazany z predosleho mesiacu
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()) {
 
                         if (dataSnapshot.getKey().equals("zaznamy")) {
@@ -635,12 +707,23 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
          */
     }
 
+    /**
+     *
+     * Pomocna metoda na inicialozovanie
+     *
+     */
     private void initView() {
 
         DatabaseManager.getDb().addValueEventListener(celkovyListener);
         //DatabaseManager.getDb().child("ucty").addValueEventListener(listenerNaUcty);
     }
 
+    /**
+     *
+     * Nastavuje suma
+     *
+     * @deprecated
+     */
     private void nastavSumy() {
 
         Calendar aktualnyDatum = Calendar.getInstance();
@@ -656,6 +739,13 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocna metoda na zratanie vsetkych prijmov
+     *
+     * @param zaznamyPrijem
+     * @return
+     */
     private Double spocitajPrijem(List<Prijem> zaznamyPrijem) {
 
         Double result = .0;
@@ -667,65 +757,19 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         return result;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        initView();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        /*Calendar aktualnyDatum = Calendar.getInstance();
-        Calendar minulyMesaic = Calendar.getInstance();
-        minulyMesaic.add(Calendar.MONTH, -1);
-
-        DatabaseManager.getDb().child("ucty").removeEventListener(listenerNaUcty);
-        if (hlavnyUcet != null) {
-            DatabaseManager
-                    .getDb()
-                    .child("zaznamy")
-                    .child(hlavnyUcet.getNazov())
-                    .child(aktualnyDatum.get(Calendar.YEAR) + "_" + (aktualnyDatum.get(Calendar.MONTH) + 1))
-                    .removeEventListener(listenerNaZaznamyAktualnyMesiac);
-
-
-            DatabaseManager
-                    .getDb()
-                    .child("zaznamy")
-                    .child(hlavnyUcet.getNazov())
-                    .child(minulyMesaic.get(Calendar.YEAR) + "_" + (minulyMesaic.get(Calendar.MONTH) + 1))
-                    .removeEventListener(listenerNaZaznamyMinulyMesiac);
-
-            DatabaseManager
-                    .getDb()
-                    .child("trvalePrikazy")
-                    .child(hlavnyUcet.getNazov())
-                    .removeEventListener(listenerNaTrvalePrikazy);
-        }
-
-         */
-
-        DatabaseManager.getDb().removeEventListener(celkovyListener);
-
-        nacitavanieProgressBar.setVisibility(View.VISIBLE);
-        nacitavanieText.setVisibility(View.VISIBLE);
-        upozornenie.setVisibility(GONE);
-        scrollView.setVisibility(GONE);
-
-
-    }
-
+    /**
+     *
+     * Pomocna metoda na nastvenie dat do grafu
+     *
+     */
     private void initBarChart() {
 
         Log.i(TAG, "initBarChart: zacinam nastavovat bar chart");
 
         initPoslednych7Dni();
 
+        // nastavnie parametrov pre barChart
         barChart = currentView.findViewById(R.id.home_fragment_rychly_prehlad_bar_chart);
-
         barChart.setDrawBarShadow(false);
         barChart.setDrawValueAboveBar(true);
         barChart.setDrawGridBackground(false);
@@ -741,6 +785,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         barChart.animateXY(1000, 1000);
         barChart.setTouchEnabled(false);
 
+        // priprava dat pre barChart
         ArrayList<BarEntry> barEntriesY = new ArrayList<>();
 
         ArrayList<String> dniTyzdna = new ArrayList<>(Arrays.asList("Po", "Ut", "St", "Št", "Pi", "So", "Ne"));
@@ -762,6 +807,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             dniTyzdnaNaX.add(dniTyzdna.get(poslednych7Dni[i]));
         }
 
+        // vkladanie dat do barChartu
         BarDataSet newSet = new BarDataSet(barEntriesY, null);
         newSet.setColor(ContextCompat.getColor(getContext(), R.color.blue_800));
         BarData data = new BarData(newSet);
@@ -770,8 +816,6 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         data.setValueTextSize(15);
         barChart.setData(data);
         barChart.getLegend().setEnabled(false);
-
-
 
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(new xAxisFormatter());
@@ -787,6 +831,11 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
     }
 
+    /**
+     *
+     * Formatter pre sumy z grafu
+     *
+     */
     private class yAxisFormatter extends ValueFormatter {
 
         private Meny mena;
@@ -794,19 +843,6 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         public yAxisFormatter(Meny mena) {
             this.mena = mena;
         }
-
-        /*
-        @Override
-        public String getAxisLabel(float value, AxisBase axis) {
-            Log.i(TAG, "getPointLabel: " + mena.getMena());
-
-            if ((mena == Meny.BTC || mena == Meny.ETH) && value != 0f) {
-                return String.format("%.8f", value);
-            }
-            return String.format("%.2f", value);
-        }
-
-         */
 
         @Override
         public String getFormattedValue(float value) {
@@ -816,19 +852,14 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             }
             return String.format("%.2f", value);
         }
-
-        /*
-        @Override
-        public String getPointLabel(Entry entry) {
-            if ((mena == Meny.BTC || mena == Meny.ETH) && entry.getY() != 0f) {
-                return String.format("%.8f", entry.getY());
-            }
-            return String.format("%.2f", entry.getY());
-        }
-
-         */
     }
 
+
+    /**
+     *
+     * Formatter pre dni tyzdna
+     *
+     */
     private class xAxisFormatter extends ValueFormatter {
 
         @Override
@@ -837,6 +868,11 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         }
     }
 
+    /**
+     *
+     * Pomocna metoda na ziskanie poslednych 7 dni
+     *
+     */
     private void initPoslednych7Dni() {
 
         Calendar calendar = Calendar.getInstance();
@@ -856,6 +892,12 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
 
     }
 
+    /**
+     *
+     * Pomocna metoda na zobrazenie chyby
+     *
+     * @param chyba
+     */
     private void nastalaChyba(String chyba) {
 
         AlertDialog.Builder chybaBuilder = new AlertDialog.Builder(getContext());
@@ -867,6 +909,16 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
         chybaBuilder.create().show();
     }
 
+
+    /**
+     *
+     * Pomocna metoda na prevody medzi menami
+     *
+     * @param sumaVoZvolenejMene
+     * @param menaZvolenehoUctu
+     * @param menaZaznamu
+     * @return
+     */
     private double transferIfNecessery(Double sumaVoZvolenejMene, Meny menaZvolenehoUctu, Meny menaZaznamu) {
 
         if (menaZaznamu.getMena().equals(menaZvolenehoUctu.getMena())) {
@@ -896,6 +948,7 @@ public class HomeFragmentRychlyPrehlad extends Fragment {
             vyslednaSuma = sumaAkoUSD * Double.parseDouble(String.valueOf(sharedPreferences.getFloat(menaZvolenehoUctu.getSkratka().toLowerCase(Locale.ROOT))));
         } catch (Exception e) {
             Log.i(TAG, "transferIfNecessery: nastala chyba " + e.getMessage() );
+            nastalaChyba("");
             return 0.;
         }
 
